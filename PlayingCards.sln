@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayingCards", "PlayingCards\PlayingCards.csproj", "{D3E32EE7-52D3-4337-879D-D87B2F1777B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{5EB3EC1F-1336-4242-8C17-027059266EED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3E32EE7-52D3-4337-879D-D87B2F1777B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3E32EE7-52D3-4337-879D-D87B2F1777B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3E32EE7-52D3-4337-879D-D87B2F1777B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3E32EE7-52D3-4337-879D-D87B2F1777B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EB3EC1F-1336-4242-8C17-027059266EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EB3EC1F-1336-4242-8C17-027059266EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EB3EC1F-1336-4242-8C17-027059266EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EB3EC1F-1336-4242-8C17-027059266EED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
