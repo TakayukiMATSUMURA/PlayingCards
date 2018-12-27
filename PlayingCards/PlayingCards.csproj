@@ -35,6 +35,8 @@
     <Compile Include="BlackJack\Card.cs" />
     <Compile Include="BlackJack\Hand.cs" />
     <Compile Include="Poker\Card.cs" />
+    <Compile Include="Hand.cs" />
+    <Compile Include="Poker\Hand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Poker\" />
