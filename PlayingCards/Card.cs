@@ -76,15 +76,14 @@ namespace PlayingCards
         {
             return a.Rank == b.Rank && a.Suit == b.Suit;
         }
-
         public static bool operator !=(Card a, Card b)
         {
-            return a != b;
+            return !(a == b);
         }
 
         public static bool operator <(Card a, Card b)
         {
-            return a.Rank < b.Rank || a.Suit < b.Suit;
+            return a.Rank < b.Rank || (a.Rank == b.Rank && a.Suit < b.Suit);
         }
         public static bool operator <=(Card a, Card b)
         {
@@ -92,11 +91,11 @@ namespace PlayingCards
         }
         public static bool operator >(Card a, Card b)
         {
-            return a.Rank > b.Rank || a.Suit > b.Suit;
+            return !(a <= b);
         }
         public static bool operator >=(Card a, Card b)
         {
-            return a > b || a == b;
+            return !(a < b);
         }
     }
 }
