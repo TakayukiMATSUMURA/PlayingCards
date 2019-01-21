@@ -7,7 +7,7 @@ namespace PlayingCards.Poker
     {
         public new const int A = 14;
 
-        public override int Rank => base.Rank == PlayingCards.Card.A ? A : base.Rank;
+        public override int Rank => (base.Rank == PlayingCards.Card.A ? A : base.Rank) - 2;
 
         public new static List<Card> GetDeck()
         {
