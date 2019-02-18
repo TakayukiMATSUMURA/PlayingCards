@@ -24,8 +24,8 @@ namespace Test
         [Test()]
         public void Testlte()
         {
-            var a = new Card(Card.A, Suit.Spade);
-            var b = new Card(Card.A, Suit.Heart);
+            var a = new Card(Card.A, Suit.Diamond);
+            var b = new Card(Card.A, Suit.Spade);
             Assert.AreEqual(true, a <= b);
         }
     }
