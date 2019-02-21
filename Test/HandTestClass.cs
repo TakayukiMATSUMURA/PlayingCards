@@ -86,6 +86,18 @@ namespace Test
 
             var hand = new Poker.Hand(cards);
             Assert.AreEqual(0x700000000, hand.Code);
+
+            cards = new List<Card>
+            {
+                new Poker.Card(Card.A, Suit.Diamond),
+                new Poker.Card(5, Suit.Club),
+                new Poker.Card(4, Suit.Heart),
+                new Poker.Card(3, Suit.Spade),
+                new Poker.Card(2, Suit.Heart)
+            };
+
+            hand = new Poker.Hand(cards);
+            Assert.AreEqual(0x400000000, hand.Code);
         }
 
         [Test()]
