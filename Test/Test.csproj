@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardTestClass.cs" />
+    <Compile Include="HandTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlayingCards\PlayingCards.csproj">

@@ -11,7 +11,7 @@ namespace PlayingCards
         Spade
     }
 
-    public class Card
+    public class Card : IComparable
     {
         public const int A = 1;
         public const int T = 10;
@@ -70,6 +70,12 @@ namespace PlayingCards
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public int CompareTo(object obj)
+        {
+            var card = (Card)obj;
+            return this < card ? -1 : this > card ? 1 : 0;
         }
 
         public static bool operator ==(Card a, Card b)

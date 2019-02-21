@@ -17,9 +17,13 @@ namespace PlayingCards.Poker
             StraightFlush
         }
 
-        public readonly ulong Code;
+        public ulong Code { get; protected set; }
 
-        public Hand(params PlayingCards.Card[] cards) : base(cards)
+        public Hand()
+        {
+        }
+
+        public Hand(List<PlayingCards.Card> cards) : base(cards)
         {
             Cards.Sort();
             Code = Encode(Cards);

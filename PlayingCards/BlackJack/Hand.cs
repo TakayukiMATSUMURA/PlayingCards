@@ -6,7 +6,7 @@ namespace PlayingCards.BlackJack
 {
     public class Hand : PlayingCards.Hand
     {
-        public Hand(params PlayingCards.Card[] cards) : base(cards)
+        public Hand(List<PlayingCards.Card> cards) : base(cards)
         {
         }
 
@@ -28,7 +28,7 @@ namespace PlayingCards.BlackJack
             var result = new List<Hand>();
             for (int i = 0; i < 2; i++)
             {
-                result.Add(new Hand(Cards[i]));
+                result.Add(new Hand(new List<PlayingCards.Card> { Cards[i] }));
             }
             return result;
         }

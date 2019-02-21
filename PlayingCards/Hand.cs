@@ -5,11 +5,16 @@ namespace PlayingCards
 {
     public class Hand
     {
-        public List<Card> Cards { get; } = new List<Card>();
+        public List<Card> Cards { get; protected set; }
 
-        public Hand(params Card[] cards)
+        public Hand()
         {
-            Cards = cards.ToList();
+            Cards = new List<Card>();
+        }
+
+        public Hand(List<Card> cards)
+        {
+            Cards = cards;
         }
 
         public void Add(Card card)
