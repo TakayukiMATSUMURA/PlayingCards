@@ -272,9 +272,7 @@ namespace Test
             usedCards.Reverse();
             for (var i = 0; i < 5; i++)
             {
-                //Assert.AreEqual(usedCards[i], hand.Cards[i]);
-                Assert.AreEqual(usedCards[i].Rank, hand.Cards[i].Rank);
-                Assert.AreEqual(usedCards[i].Suit, hand.Cards[i].Suit);
+                Assert.AreEqual(usedCards[i], hand.Cards[i]);
             }
         }
     }
