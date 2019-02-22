@@ -22,7 +22,8 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xdc531, hand.Code);
+            Assert.AreEqual(0xed642, hand.Code);
+            Assert.AreEqual(Poker.HandRank.HighCard, hand.Rank);
         }
 
         [Test()]
@@ -39,13 +40,14 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0x9d5300, hand.Code);
+            Assert.AreEqual(0xae6400, hand.Code);
+            Assert.AreEqual(Poker.HandRank.OnePair, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(5);
             cards.Sort();
             cards.Reverse();
-            var usedCards = cards.Where(x => x.Rank == (Card.T - 2)).ToList();
+            var usedCards = cards.Where(x => x.Rank == Card.T).ToList();
             usedCards.AddRange(cards.Where(x => !usedCards.Contains(x)).Take(3));
             
             for (var i = 0; i < 5; i++)
@@ -68,14 +70,15 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xc5d0000, hand.Code);
+            Assert.AreEqual(0xd6e0000, hand.Code);
+            Assert.AreEqual(Poker.HandRank.TwoPair, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(3);
             cards.Sort();
             cards.Reverse();
-            var usedCards = cards.Where(x => x.Rank == (Card.K - 2)).ToList();
-            usedCards.AddRange(cards.Where(x => x.Rank == (6 - 2)));
+            var usedCards = cards.Where(x => x.Rank == Card.K).ToList();
+            usedCards.AddRange(cards.Where(x => x.Rank == 6));
             usedCards.Add(cards[0]);
             for (var i = 0; i < 5; i++)
             {
@@ -97,16 +100,16 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xd5200000, hand.Code);
+            Assert.AreEqual(0xe6300000, hand.Code);
+            Assert.AreEqual(Poker.HandRank.ThreeOfAKind, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(4);
             cards.Sort();
             cards.Reverse();
-            var aces = cards.Where(x => x.Rank == (Poker.Card.A - 2)).ToList();
+            var aces = cards.Where(x => x.Rank == Poker.Card.A).ToList();
             var usedCards = aces;
-            var kickers = cards.Where(x => x.Rank != (Poker.Card.A - 2)).Take(2).ToList();
-            usedCards.AddRange(kickers);
+            usedCards.AddRange(cards.Where(x => !usedCards.Contains(x)).Take(2));
             for (var i = 0; i < 5; i++)
             {
                 Assert.AreEqual(usedCards[i], hand.Cards[i]);
@@ -127,7 +130,8 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0x700000000, hand.Code);
+            Assert.AreEqual(0x800000000, hand.Code);
+            Assert.AreEqual(Poker.HandRank.Straight, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(2);
@@ -153,7 +157,8 @@ namespace Test
                 new Poker.Card(3, Suit.Spade)
             };
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0x400000000, hand.Code);
+            Assert.AreEqual(0x500000000, hand.Code);
+            Assert.AreEqual(Poker.HandRank.Straight, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(3);
@@ -182,7 +187,8 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xdc53100000, hand.Code);
+            Assert.AreEqual(0xed64200000, hand.Code);
+            Assert.AreEqual(Poker.HandRank.Flush, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             var usedCards = cards.Where(x => x.Suit == Suit.Diamond).ToList();
@@ -208,13 +214,14 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0x5d000000000, hand.Code);
+            Assert.AreEqual(0x6e000000000, hand.Code);
+            Assert.AreEqual(Poker.HandRank.FullHouse, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
-            var usedCards = cards.Where(x => x.Rank == (6 - 2)).ToList();
+            var usedCards = cards.Where(x => x.Rank == 6).ToList();
             usedCards.Sort();
             usedCards.Reverse();
-            var aces = cards.Where(x => x.Rank == (Poker.Card.A - 2)).ToList();
+            var aces = cards.Where(x => x.Rank == Poker.Card.A).ToList();
             aces.Sort();
             aces.Reverse();
             usedCards.AddRange(aces);
@@ -238,10 +245,11 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xd90000000000, hand.Code);
+            Assert.AreEqual(0xea0000000000, hand.Code);
+            Assert.AreEqual(Poker.HandRank.FourOfAKind, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
-            var usedCards = cards.Where(x => x.Rank == (Poker.Card.A - 2)).ToList();
+            var usedCards = cards.Where(x => x.Rank == Poker.Card.A).ToList();
             usedCards.Sort();
             usedCards.Reverse();
             usedCards.Add(cards[1]);
@@ -265,7 +273,8 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xba98700000000, hand.Code);
+            Assert.AreEqual(0xc000000000000, hand.Code);
+            Assert.AreEqual(Poker.HandRank.StraightFlush, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             var usedCards = cards.Where(x => x.Suit == Suit.Spade).ToList();
@@ -273,7 +282,9 @@ namespace Test
             usedCards.Reverse();
             for (var i = 0; i < 5; i++)
             {
-                Assert.AreSame(usedCards[i], hand.Cards[i]);
+                //Assert.AreEqual(usedCards[i], hand.Cards[i]);
+                Assert.AreEqual(usedCards[i].Rank, hand.Cards[i].Rank);
+                Assert.AreEqual(usedCards[i].Suit, hand.Cards[i].Suit);
             }
         }
     }

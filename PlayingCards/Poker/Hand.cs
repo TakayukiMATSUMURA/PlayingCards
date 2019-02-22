@@ -42,12 +42,12 @@ namespace PlayingCards.Poker
             ulong result = 0;
             uint bitmap = 0;
             uint mask = 0;
-            var rcnt = new int[14];
+            var rcnt = new int[13];
             var scnt = new int[4];
 
             foreach (var card in cards)
             {
-                rcnt[card.Rank + 1]++;
+                rcnt[card.Rank - 2]++;
                 scnt[(int)card.Suit]++;
             }
 
@@ -61,7 +61,7 @@ namespace PlayingCards.Poker
                     var c = cards[i];
                     if ((int)c.Suit == s)
                     {
-                        bitmap |= (uint)1 << c.Rank;
+                        bitmap |= (uint)1 << (c.Rank - 2);
                     }
                 }
 
@@ -70,17 +70,12 @@ namespace PlayingCards.Poker
                 {
                     if ((bitmap & mask) == mask)
                     {
-                        for (uint j = 0; j < 5; j++)
-                        {
-                            result = (result << 4) | (13 - i - j);
-                        }
-
-                        return result << ((int)(HandRank.StraightFlush) * 4);
+                        return (ulong)(14 - i) << (4 * 4) << ((int)(HandRank.StraightFlush) * 4);
                     }
                 }
                 if (bitmap == 0x100f) // 1 0000 00000 1111 = A5432
                 {
-                    return (ulong)4 << 0x10 << ((int)(HandRank.StraightFlush) * 4);
+                    return (ulong)5 << 0x10 << ((int)(HandRank.StraightFlush) * 4);
                 }
 
                 mask = 0x1000;
@@ -88,7 +83,7 @@ namespace PlayingCards.Poker
                 {
                     if ((bitmap & mask) != 0)
                     {
-                        result = result << 4 | (uint)(13 - i);
+                        result = result << 4 | (uint)(Poker.Card.A - i);
                         if (result > 0x10000) break;
                     }
                 }
@@ -101,7 +96,7 @@ namespace PlayingCards.Poker
             var threeOfAKindIX2 = -1;
             var pairIX1 = -1;
             var pairIX2 = -1;
-            for (int i = 1; i <= 13; ++i)
+            for (int i = 0; i < 13; ++i)
             {
                 switch (rcnt[i])
                 {
@@ -121,13 +116,13 @@ namespace PlayingCards.Poker
 
             if (fourOfAKindIX >= 0)
             {
-                result = (ulong)fourOfAKindIX;
+                result = (ulong)fourOfAKindIX + 2;
 
-                for (int i = 13; i > 0; i--)
+                for (int i = 12; i >= 0; i--)
                 {
                     if (rcnt[i] > 0 && i != fourOfAKindIX)
                     {
-                        result = (result << 4) | (uint)i;
+                        result = (result << 4) | (uint)(i + 2);
                         return result << 12 << ((int)(HandRank.FourOfAKind) * 4);
                     }
                 }
@@ -138,13 +133,13 @@ namespace PlayingCards.Poker
                 var pair = pairIX1 >= 0 ? pairIX1 : pairIX2;
                 if (threeOfAKindIX2 > pair) pair = threeOfAKindIX2;
 
-                result = (ulong)((threeOfAKindIX1 << 4) | pair);
+                result = (ulong)(((threeOfAKindIX1 + 2) << 4) | (pair + 2));
                 return result << 12 << ((int)(HandRank.FullHouse) * 4);
             }
 
             bitmap = 0;
             mask = 1;
-            for (int i = 1; i < Card.A; ++i, mask <<= 1)
+            for (int i = 0; i < 13; ++i, mask <<= 1)
             {
                 if (rcnt[i] != 0)
                     bitmap |= mask;
@@ -155,22 +150,22 @@ namespace PlayingCards.Poker
             {
                 if ((bitmap & mask) == mask)
                 {
-                    return (ulong)(13 - i) << 0x10 << ((int)(HandRank.Straight) * 4);
+                    return (ulong)(14 - i) << 0x10 << ((int)(HandRank.Straight) * 4);
                 }
             }
             if ((bitmap & 0x100f) == 0x100f) // 1 0000 00000 1111 = A5432
             {
-                return (ulong)4 << 0x10 << ((int)(HandRank.Straight) * 4);
+                return (ulong)5 << 0x10 << ((int)(HandRank.Straight) * 4);
             }
             if (threeOfAKindIX1 >= 0)
             {
-                result = (ulong)threeOfAKindIX1;
+                result = (ulong)threeOfAKindIX1 + 2;
 
-                for (int i = 13; i > 0; i--)
+                for (int i = 12; i >= 0; i--)
                 {
                     if (rcnt[i] > 0 && i != threeOfAKindIX1)
                     {
-                        result = (result << 4) | (uint)i;
+                        result = (result << 4) | (uint)(i + 2);
                         if (result >= 0x100) break;
                     }
                 }
@@ -178,13 +173,13 @@ namespace PlayingCards.Poker
             }
             if (pairIX2 >= 0)
             {
-                result = (ulong)((pairIX1 << 4) | pairIX2);
+                result = (ulong)(((pairIX1 + 2) << 4) | (pairIX2 + 2));
 
-                for (int i = 13; i > 0; i--)
+                for (int i = 12; i >= 0; i--)
                 {
                     if (rcnt[i] > 0 && i != pairIX2 && i != pairIX1)
                     {
-                        result = (result << 4) | (uint)i;
+                        result = (result << 4) | (uint)(i + 2);
                         break;
                     }
                 }
@@ -192,24 +187,24 @@ namespace PlayingCards.Poker
             }
             if (pairIX1 >= 0)
             {
-                result = (ulong)pairIX1;
+                result = (ulong)(pairIX1 + 2);
 
-                for (int i = 13; i > 0; i--)
+                for (int i = 12; i >= 0; i--)
                 {
                     if (rcnt[i] > 0 && i != pairIX1)
                     {
-                        result = (result << 4) | (uint)i;
+                        result = (result << 4) | (uint)(i + 2);
                         if (result >= 0x1000) break;
                     }
                 }
                 return (result << 4 << ((int)(HandRank.OnePair) * 4));
             }
 
-            for (uint i = 13; i > 0; i--)
+            for (uint i = 12; i >= 0; i--)
             {
                 if (rcnt[i] > 0)
                 {
-                    result = (result << 4) | i;
+                    result = (result << 4) | (i + 2);
                     if (result >= 0x10000) break;
                 }
             }
@@ -233,9 +228,10 @@ namespace PlayingCards.Poker
             var cards = new List<PlayingCards.Card>(allCards);
             cards.Sort();
             cards.Reverse();
+            var result = new List<PlayingCards.Card>();
             var rank = GetRank(code);
             var cardsCode = code >> ((int)rank * 4);
-            var result = new List<PlayingCards.Card>();
+            var nextRank = (int)(cardsCode >> (4 * 4));
             Suit majorSuit;
             var majorRank = 0;
             var pair = new List<PlayingCards.Card>();
@@ -246,22 +242,25 @@ namespace PlayingCards.Poker
                     var majorSuitCards = cards.Where(x => x.Suit == majorSuit).ToList();
                     while (result.Count < 5)
                     {
-                        result.Add(majorSuitCards.First(x => x.Rank == (int)((cardsCode & 0xf) - 1)));
-                        cardsCode >>= 4;
+                        result.Add(majorSuitCards.First(x => x.Rank == nextRank));
+                        nextRank--;
+                        if(nextRank == 1)
+                        {
+                            nextRank = Card.A;
+                        }
                     }
-                    result.Reverse();
                     return result;
                 case HandRank.FourOfAKind:
-                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    majorRank = (int)(cardsCode >> (4 * 4));
                     result = cards.Where(x => x.Rank == majorRank).ToList();
-                    result.Add(cards.First(x => x.Rank == (int)(((cardsCode >> (4 * 3)) & 0xf) - 1)));
+                    result.Add(cards.First(x => x.Rank == (int)((cardsCode >> (4 * 3)) & 0xf)));
                     return result;
                 case HandRank.FullHouse:
-                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    majorRank = (int)(cardsCode >> (4 * 4));
                     result = cards.Where(x => x.Rank == majorRank).ToList();
                     result.Sort();
                     result.Reverse();
-                    majorRank = (int)(cardsCode >> (4 * 3)) & 0xf - 1;
+                    majorRank = (int)(cardsCode >> (4 * 3)) & 0xf;
                     pair = cards.Where(x => x.Rank == majorRank).ToList();
                     pair.Sort();
                     pair.Reverse();
@@ -274,19 +273,18 @@ namespace PlayingCards.Poker
                     result.Reverse();
                     return result.Take(5).ToList();
                 case HandRank.Straight:
-                    var nextRank = (int)(cardsCode >> (4 * 4)) - 1;
                     while (result.Count < 5)
                     {
                         result.Add(cards.First(x => x.Rank == nextRank));
                         nextRank--;
-                        if (nextRank == -1)
+                        if (nextRank == 1)
                         {
-                            nextRank = Card.A - 2;
+                            nextRank = Card.A;
                         }
                     }
                     return result;
                 case HandRank.ThreeOfAKind:
-                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    majorRank = (int)(cardsCode >> (4 * 4));
                     result = cards.Where(x => x.Rank == majorRank).ToList();
                     result.Sort();
                     result.Reverse();
@@ -296,11 +294,11 @@ namespace PlayingCards.Poker
                     }
                     return result;
                 case HandRank.TwoPair:
-                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    majorRank = (int)(cardsCode >> (4 * 4));
                     result = cards.Where(x => x.Rank == majorRank).ToList();
                     result.Sort();
                     result.Reverse();
-                    majorRank = (int)(cardsCode >> (4 * 3)) & 0xf - 1;
+                    majorRank = (int)(cardsCode >> (4 * 3)) & 0xf;
                     pair = cards.Where(x => x.Rank == majorRank).ToList();
                     pair.Sort();
                     pair.Reverse();
@@ -308,7 +306,7 @@ namespace PlayingCards.Poker
                     result.Add(cards.First(x => !result.Contains(x)));
                     return result;
                 case HandRank.OnePair:
-                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    majorRank = (int)(cardsCode >> (4 * 4));
                     result = cards.Where(x => x.Rank == majorRank).ToList();
                     result.AddRange(cards.Where(x => !result.Contains(x)).Take(3));
                     return result;
