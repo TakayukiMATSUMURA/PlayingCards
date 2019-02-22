@@ -1,32 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 namespace PlayingCards.Poker
 {
+    public enum HandRank
+    {
+        HighCard = 0,
+        OnePair,
+        TwoPair,
+        ThreeOfAKind,
+        Straight,
+        Flush,
+        FullHouse,
+        FourOfAKind,
+        StraightFlush
+    }
+
     public class Hand : PlayingCards.Hand
     {
-        public enum Rank
-        {
-            HighCard = 0,
-            OnePair,
-            TwoPair,
-            ThreeOfAKind,
-            Straight,
-            Flush,
-            FullHouse,
-            FourOfAKind,
-            StraightFlush
-        }
-
         public ulong Code { get; protected set; }
+
+        public HandRank Rank => GetRank(Code);
 
         public Hand()
         {
         }
 
-        public Hand(List<PlayingCards.Card> cards) : base(cards)
+        public Hand(List<PlayingCards.Card> cards)
         {
-            Cards.Sort();
-            Code = Encode(Cards);
+            Code = Encode(cards);
+            Cards = GetUsedCards(Code, cards);
         }
 
         public override string ToString()
@@ -67,12 +70,17 @@ namespace PlayingCards.Poker
                 {
                     if ((bitmap & mask) == mask)
                     {
-                        return (ulong)(13 - i) << 0x10 << ((int)(Rank.StraightFlush) * 4);
+                        for (uint j = 0; j < 5; j++)
+                        {
+                            result = (result << 4) | (13 - i - j);
+                        }
+
+                        return result << ((int)(HandRank.StraightFlush) * 4);
                     }
                 }
                 if (bitmap == 0x100f) // 1 0000 00000 1111 = A5432
                 {
-                    return (ulong)4 << 0x10 << ((int)(Rank.StraightFlush) * 4);
+                    return (ulong)4 << 0x10 << ((int)(HandRank.StraightFlush) * 4);
                 }
 
                 mask = 0x1000;
@@ -85,7 +93,7 @@ namespace PlayingCards.Poker
                     }
                 }
 
-                return result << ((int)(Rank.Flush) * 4);
+                return result << ((int)(HandRank.Flush) * 4);
             }
 
             var fourOfAKindIX = -1;
@@ -120,7 +128,7 @@ namespace PlayingCards.Poker
                     if (rcnt[i] > 0 && i != fourOfAKindIX)
                     {
                         result = (result << 4) | (uint)i;
-                        return result << 12 << ((int)(Rank.FourOfAKind) * 4);
+                        return result << 12 << ((int)(HandRank.FourOfAKind) * 4);
                     }
                 }
             }
@@ -131,7 +139,7 @@ namespace PlayingCards.Poker
                 if (threeOfAKindIX2 > pair) pair = threeOfAKindIX2;
 
                 result = (ulong)((threeOfAKindIX1 << 4) | pair);
-                return result << 12 << ((int)(Rank.FullHouse) * 4);
+                return result << 12 << ((int)(HandRank.FullHouse) * 4);
             }
 
             bitmap = 0;
@@ -147,12 +155,12 @@ namespace PlayingCards.Poker
             {
                 if ((bitmap & mask) == mask)
                 {
-                    return (ulong)(13 - i) << 0x10 << ((int)(Rank.Straight) * 4);
+                    return (ulong)(13 - i) << 0x10 << ((int)(HandRank.Straight) * 4);
                 }
             }
             if ((bitmap & 0x100f) == 0x100f) // 1 0000 00000 1111 = A5432
             {
-                return (ulong)4 << 0x10 << ((int)(Rank.Straight) * 4);
+                return (ulong)4 << 0x10 << ((int)(HandRank.Straight) * 4);
             }
             if (threeOfAKindIX1 >= 0)
             {
@@ -166,7 +174,7 @@ namespace PlayingCards.Poker
                         if (result >= 0x100) break;
                     }
                 }
-                return (result << 8 << ((int)(Rank.ThreeOfAKind) * 4));
+                return (result << 8 << ((int)(HandRank.ThreeOfAKind) * 4));
             }
             if (pairIX2 >= 0)
             {
@@ -180,7 +188,7 @@ namespace PlayingCards.Poker
                         break;
                     }
                 }
-                return (result << 8 << ((int)(Rank.TwoPair) * 4));
+                return (result << 8 << ((int)(HandRank.TwoPair) * 4));
             }
             if (pairIX1 >= 0)
             {
@@ -194,7 +202,7 @@ namespace PlayingCards.Poker
                         if (result >= 0x1000) break;
                     }
                 }
-                return (result << 4 << ((int)(Rank.OnePair) * 4));
+                return (result << 4 << ((int)(HandRank.OnePair) * 4));
             }
 
             for (uint i = 13; i > 0; i--)
@@ -205,9 +213,109 @@ namespace PlayingCards.Poker
                     if (result >= 0x10000) break;
                 }
             }
-            return (result << ((int)Rank.HighCard * 4));
+            return (result << ((int)HandRank.HighCard * 4));
         }
 
+        public static HandRank GetRank(ulong code)
+        {
+            return code >= ((ulong)0x10000 << (int)HandRank.StraightFlush * 4) ? HandRank.StraightFlush :
+                   code >= ((ulong)0x10000 << (int)HandRank.FourOfAKind * 4) ? HandRank.FourOfAKind :
+                   code >= ((ulong)0x10000 << (int)HandRank.FullHouse * 4) ? HandRank.FullHouse :
+                   code >= ((ulong)0x10000 << (int)HandRank.Flush * 4) ? HandRank.Flush :
+                   code >= ((ulong)0x10000 << (int)HandRank.Straight * 4) ? HandRank.Straight :
+                   code >= ((ulong)0x10000 << (int)HandRank.ThreeOfAKind * 4) ? HandRank.ThreeOfAKind :
+                   code >= ((ulong)0x10000 << (int)HandRank.TwoPair * 4) ? HandRank.TwoPair :
+                   code >= ((ulong)0x10000 << (int)HandRank.OnePair * 4) ? HandRank.OnePair : HandRank.HighCard;
+        }
+
+        public static List<PlayingCards.Card> GetUsedCards(ulong code, List<PlayingCards.Card> allCards)
+        {
+            var cards = new List<PlayingCards.Card>(allCards);
+            cards.Sort();
+            cards.Reverse();
+            var rank = GetRank(code);
+            var cardsCode = code >> ((int)rank * 4);
+            var result = new List<PlayingCards.Card>();
+            Suit majorSuit;
+            var majorRank = 0;
+            var pair = new List<PlayingCards.Card>();
+            switch (rank)
+            {
+                case HandRank.StraightFlush:
+                    majorSuit = cards.Select(x => x.Suit).First(x => cards.Count(y => y.Suit == x) >= 5);
+                    var majorSuitCards = cards.Where(x => x.Suit == majorSuit).ToList();
+                    while (result.Count < 5)
+                    {
+                        result.Add(majorSuitCards.First(x => x.Rank == (int)((cardsCode & 0xf) - 1)));
+                        cardsCode >>= 4;
+                    }
+                    result.Reverse();
+                    return result;
+                case HandRank.FourOfAKind:
+                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    result = cards.Where(x => x.Rank == majorRank).ToList();
+                    result.Add(cards.First(x => x.Rank == (int)(((cardsCode >> (4 * 3)) & 0xf) - 1)));
+                    return result;
+                case HandRank.FullHouse:
+                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    result = cards.Where(x => x.Rank == majorRank).ToList();
+                    result.Sort();
+                    result.Reverse();
+                    majorRank = (int)(cardsCode >> (4 * 3)) & 0xf - 1;
+                    pair = cards.Where(x => x.Rank == majorRank).ToList();
+                    pair.Sort();
+                    pair.Reverse();
+                    result.AddRange(pair);
+                    return result;
+                case HandRank.Flush:
+                    majorSuit = cards.Select(x => x.Suit).First(x => cards.Count(y => y.Suit == x) >= 5);
+                    result = cards.Where(x => x.Suit == majorSuit).ToList();
+                    result.Sort();
+                    result.Reverse();
+                    return result.Take(5).ToList();
+                case HandRank.Straight:
+                    var nextRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    while (result.Count < 5)
+                    {
+                        result.Add(cards.First(x => x.Rank == nextRank));
+                        nextRank--;
+                        if (nextRank == -1)
+                        {
+                            nextRank = Card.A - 2;
+                        }
+                    }
+                    return result;
+                case HandRank.ThreeOfAKind:
+                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    result = cards.Where(x => x.Rank == majorRank).ToList();
+                    result.Sort();
+                    result.Reverse();
+                    while (result.Count < 5)
+                    {
+                        result.Add(cards.First(x => !result.Contains(x)));
+                    }
+                    return result;
+                case HandRank.TwoPair:
+                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    result = cards.Where(x => x.Rank == majorRank).ToList();
+                    result.Sort();
+                    result.Reverse();
+                    majorRank = (int)(cardsCode >> (4 * 3)) & 0xf - 1;
+                    pair = cards.Where(x => x.Rank == majorRank).ToList();
+                    pair.Sort();
+                    pair.Reverse();
+                    result.AddRange(pair);
+                    result.Add(cards.First(x => !result.Contains(x)));
+                    return result;
+                case HandRank.OnePair:
+                    majorRank = (int)(cardsCode >> (4 * 4)) - 1;
+                    result = cards.Where(x => x.Rank == majorRank).ToList();
+                    result.AddRange(cards.Where(x => !result.Contains(x)).Take(3));
+                    return result;
+                default:
+                    return cards.Take(5).ToList();
+            }
+        }
 
         public override bool Equals(object obj)
         {
