@@ -22,7 +22,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xed642, hand.Code);
             Assert.AreEqual(Poker.HandRank.HighCard, hand.Rank);
         }
 
@@ -40,7 +39,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xae6400, hand.Code);
             Assert.AreEqual(Poker.HandRank.OnePair, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
@@ -70,7 +68,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xd6e0000, hand.Code);
             Assert.AreEqual(Poker.HandRank.TwoPair, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
@@ -100,7 +97,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xe6300000, hand.Code);
             Assert.AreEqual(Poker.HandRank.ThreeOfAKind, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
@@ -130,7 +126,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0x800000000, hand.Code);
             Assert.AreEqual(Poker.HandRank.Straight, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
@@ -157,7 +152,6 @@ namespace Test
                 new Poker.Card(3, Suit.Spade)
             };
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0x500000000, hand.Code);
             Assert.AreEqual(Poker.HandRank.Straight, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
@@ -187,7 +181,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xed64200000, hand.Code);
             Assert.AreEqual(Poker.HandRank.Flush, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
@@ -214,7 +207,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0x6e000000000, hand.Code);
             Assert.AreEqual(Poker.HandRank.FullHouse, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
@@ -245,7 +237,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xea0000000000, hand.Code);
             Assert.AreEqual(Poker.HandRank.FourOfAKind, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
@@ -273,7 +264,6 @@ namespace Test
             };
 
             var hand = new Poker.Hand(cards);
-            Assert.AreEqual(0xc000000000000, hand.Code);
             Assert.AreEqual(Poker.HandRank.StraightFlush, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);

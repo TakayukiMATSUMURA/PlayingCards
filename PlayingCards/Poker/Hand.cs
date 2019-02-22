@@ -18,9 +18,8 @@ namespace PlayingCards.Poker
 
     public class Hand : PlayingCards.Hand
     {
-        public ulong Code { get; protected set; }
-
-        public HandRank Rank => GetRank(Code);
+        protected ulong _code { get; set; }
+        public HandRank Rank => GetRank(_code);
 
         public Hand()
         {
@@ -28,8 +27,8 @@ namespace PlayingCards.Poker
 
         public Hand(List<PlayingCards.Card> cards)
         {
-            Code = Encode(cards);
-            Cards = GetUsedCards(Code, cards);
+            _code = Encode(cards);
+            Cards = GetUsedCards(_code, cards);
         }
 
         public override string ToString()
@@ -317,7 +316,7 @@ namespace PlayingCards.Poker
 
         public override bool Equals(object obj)
         {
-            return Code == ((Hand)obj).Code;
+            return _code == ((Hand)obj)._code;
         }
 
         public override int GetHashCode()
@@ -327,7 +326,7 @@ namespace PlayingCards.Poker
 
         public static bool operator ==(Hand a, Hand b)
         {
-            return a.Code == b.Code;
+            return a._code == b._code;
         }
         public static bool operator !=(Hand a, Hand b)
         {
@@ -336,7 +335,7 @@ namespace PlayingCards.Poker
 
         public static bool operator <(Hand a, Hand b)
         {
-            return a.Code < b.Code;
+            return a._code < b._code;
         }
         public static bool operator <=(Hand a, Hand b)
         {
@@ -344,7 +343,7 @@ namespace PlayingCards.Poker
         }
         public static bool operator >(Hand a, Hand b)
         {
-            return !(a.Code <= b.Code);
+            return !(a._code <= b._code);
         }
         public static bool operator >=(Hand a, Hand b)
         {

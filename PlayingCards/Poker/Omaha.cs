@@ -8,7 +8,7 @@ namespace PlayingCards.Poker.Omaha
     {
         public Hand(List<Card> pocketCards, List<Card> communityCards)
         {
-            Code = 0;
+            _code = 0;
             for (var i = 0; i < pocketCards.Count - 1; i++)
             {
                 for (var j = i + 1; j < pocketCards.Count; j++)
@@ -21,12 +21,11 @@ namespace PlayingCards.Poker.Omaha
                             {
 
                                 var cards = new List<Card> { pocketCards[i], pocketCards[j], communityCards[k], communityCards[l], communityCards[m] };
-                                cards.Sort();
-                                var hand = new Poker.Hand(cards);
-                                if (hand.Code > Code)
+                                var code = Encode(cards);
+                                if (code > _code)
                                 {
-                                    Cards = cards;
-                                    Code = hand.Code;
+                                    Cards = new Poker.Hand(cards).Cards;
+                                    _code = code;
                                 }
                             }
                         }
