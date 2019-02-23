@@ -33,7 +33,7 @@ namespace PlayingCards.Poker
 
         public override string ToString()
         {
-            return string.Join("", base.ToString());
+            return base.ToString() + " " + Rank.ToString();
         }
 
         public static ulong Encode(List<PlayingCards.Card> cards)
