@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace PlayingCards.Poker
@@ -243,7 +244,7 @@ namespace PlayingCards.Poker
                     {
                         result.Add(majorSuitCards.First(x => x.Rank == nextRank));
                         nextRank--;
-                        if(nextRank == 1)
+                        if (nextRank == 1)
                         {
                             nextRank = Card.A;
                         }
@@ -312,6 +313,186 @@ namespace PlayingCards.Poker
                 default:
                     return cards.Take(5).ToList();
             }
+        }
+
+        public class Equity
+        {
+            public float Total;
+            public float Win;
+            public float Split;
+        }
+
+        public static List<Equity> CalcEquity(List<List<PlayingCards.Card>> hands, List<PlayingCards.Card> communityCards)
+        {
+            var result = new List<Equity>();
+
+            var deck = Card.GetDeck();
+            var allCards = hands.SelectMany(x => x);
+            deck.RemoveAll(x => allCards.Contains(x) || communityCards.Contains(x));
+            var counters = new int[hands.Count];
+            var splitCounters = new int[hands.Count, hands.Count + 1];
+
+            var times = 0;
+            var restCards = 5 - communityCards.Count;
+
+            Action updateCounters = () =>
+            {
+                var winners = GetWinners(hands, communityCards);
+                if ((winners & 0x8000) == 0)
+                {
+                    var index = 0;
+                    while (winners % 2 == 0)
+                    {
+                        index++;
+                        winners >>= 1;
+                    }
+                    counters[index]++;
+                }
+                else
+                {
+                    winners &= 0x7fff;
+                    var numPlayer = 0;
+                    var tmp = winners;
+                    while (tmp > 0)
+                    {
+                        if (tmp % 2 == 1)
+                        {
+                            numPlayer++;
+                        }
+                        tmp >>= 1;
+                    }
+
+                    var index = 0;
+                    while (winners > 0)
+                    {
+                        if ((winners % 2) != 0)
+                        {
+                            splitCounters[index, numPlayer]++;
+                        }
+
+                        index++;
+                        winners >>= 1;
+                    }
+                }
+            };
+
+            if (restCards == 1)
+            {
+                for (var i = 0; i < deck.Count; i++)
+                {
+                    communityCards.Add(deck[i]);
+                    updateCounters();
+                    communityCards.RemoveAt(communityCards.Count - 1);
+                    times++;
+                }
+            }
+            else if (restCards == 2)
+            {
+                for (var i = 0; i < deck.Count - 1; i++)
+                {
+                    for (var j = i + 1; j < deck.Count; j++)
+                    {
+                        communityCards.Add(deck[i]);
+                        communityCards.Add(deck[j]);
+                        updateCounters();
+                        communityCards.RemoveAt(communityCards.Count - 1);
+                        communityCards.RemoveAt(communityCards.Count - 1);
+                        times++;
+                    }
+                }
+            }
+            else if (restCards == 5)
+            {
+                for (var i = 0; i < deck.Count - 4; i++)
+                {
+                    for (var j = i + 1; j < deck.Count - 3; j++)
+                    {
+                        for (var k = j + 1; k < deck.Count - 2; k++)
+                        {
+                            for (var l = k + 1; l < deck.Count - 1; l++)
+                            {
+                                for (var m = l + 1; m < deck.Count; m++)
+                                {
+                                    communityCards.Add(deck[i]);
+                                    communityCards.Add(deck[j]);
+                                    communityCards.Add(deck[k]);
+                                    communityCards.Add(deck[l]);
+                                    communityCards.Add(deck[m]);
+                                    updateCounters();
+                                    for (var n = 0; n < 5; n++)
+                                    {
+                                        communityCards.RemoveAt(communityCards.Count - 1);
+                                    }
+
+                                    times++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (var i = 0; i < hands.Count; i++)
+            {
+                var win = (float)counters[i] * 100 / times;
+                var split = 0.0f;
+                for (var j = 1; j <= hands.Count; j++)
+                {
+                    split += splitCounters[i, j];
+                }
+                split = split * 100 / times;
+                var equ = 0.0f;
+                for(var j = 2; j <= hands.Count; j++)
+                {
+                    equ += splitCounters[i, j] / j;
+                }
+                equ = equ * 100 / times + win;
+                result.Add(new Equity { Total = (float)Math.Round(equ, 2), Win = (float)Math.Round(win, 2), Split = (float)Math.Round(split, 2) });
+            }
+
+            return result;
+        }
+
+        private static int GetWinners(List<List<PlayingCards.Card>> hands, List<PlayingCards.Card> communityCards)
+        {
+            var codes = GetHandCodes(hands, communityCards);
+            var maxCode = codes[0];
+            var result = 1;
+            for (var i = 1; i < codes.Count; i++)
+            {
+                if (codes[i] == maxCode)
+                {
+                    result |= 0x8000 | (1 << i);
+                }
+                else if (codes[i] > maxCode)
+                {
+                    result = 1 << i;
+                    maxCode = codes[i];
+                }
+            }
+
+            return result;
+        }
+
+        private static List<ulong> GetHandCodes(List<List<PlayingCards.Card>> hands, List<PlayingCards.Card> communityCards)
+        {
+            var communityCardSize = communityCards.Count;
+            communityCards.Add(hands[0][0]);
+            communityCards.Add(hands[0][1]);
+            var result = new List<ulong>();
+
+            foreach (var hand in hands)
+            {
+                for (var i = 0; i < 2; i++)
+                {
+                    communityCards[communityCardSize + i] = hand[i];
+                }
+                result.Add(Encode(communityCards));
+            }
+
+            communityCards.RemoveRange(communityCardSize, 2);
+
+            return result;
         }
 
         public override bool Equals(object obj)

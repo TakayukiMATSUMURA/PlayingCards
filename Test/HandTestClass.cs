@@ -47,7 +47,7 @@ namespace Test
             cards.Reverse();
             var usedCards = cards.Where(x => x.Rank == Card.T).ToList();
             usedCards.AddRange(cards.Where(x => !usedCards.Contains(x)).Take(3));
-            
+
             for (var i = 0; i < 5; i++)
             {
                 Assert.AreEqual(usedCards[i], hand.Cards[i]);
@@ -274,6 +274,69 @@ namespace Test
             {
                 Assert.AreEqual(usedCards[i], hand.Cards[i]);
             }
+        }
+
+        [Test()]
+        public void TestEquity()
+        {
+            var hands = new List<List<Card>>
+            {
+                new List<Card>
+                {
+                    new Poker.Card(Card.A, Suit.Heart),
+                    new Poker.Card(2, Suit.Diamond)
+                },
+                new List<Card>
+                {
+                    new Poker.Card(Card.A, Suit.Diamond),
+                    new Poker.Card(8, Suit.Diamond)
+                }
+            };
+            var communityCards = new List<Card> { };
+            var time = System.DateTime.Now;
+            var result = Poker.Hand.CalcEquity(hands, communityCards);
+
+            Assert.AreEqual(32.97f, result[0].Total);
+            Assert.AreEqual(22.73f, result[0].Win);
+            Assert.AreEqual(20.49f, result[0].Split);
+            Assert.AreEqual(67.03f, result[1].Total);
+            Assert.AreEqual(56.78f, result[1].Win);
+            Assert.AreEqual(20.49f, result[1].Split);
+        }
+        
+        [Test()]
+        public void TestEquityWith3Hands()
+        {
+            var hands = new List<List<Card>>
+            {
+                new List<Card>
+                {
+                    new Poker.Card(Card.A, Suit.Spade),
+                    new Poker.Card(Card.K, Suit.Heart),
+                },
+                new List<Card>
+                {
+                    new Poker.Card(9, Suit.Diamond),
+                    new Poker.Card(8, Suit.Diamond)
+                },
+                new List<Card>
+                {
+                    new Poker.Card(Card.A, Suit.Club),
+                    new Poker.Card(8, Suit.Spade)
+                }
+            };
+            var communityCards = new List<Card> { };
+            var time = System.DateTime.Now;
+            var result = Poker.Hand.CalcEquity(hands, communityCards);
+            Assert.AreEqual(55.28f, result[0].Total);
+            Assert.AreEqual(53.32f, result[0].Win);
+            Assert.AreEqual(4.02f, result[0].Split);
+            Assert.AreEqual(31.18f, result[1].Total);
+            Assert.AreEqual(30.34f, result[1].Win);
+            Assert.AreEqual(1.79f, result[1].Split);
+            Assert.AreEqual(13.54f, result[2].Total);
+            Assert.AreEqual(10.85f, result[2].Win);
+            Assert.AreEqual(5.48f, result[2].Split);
         }
     }
 }
