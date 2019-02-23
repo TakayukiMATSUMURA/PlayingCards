@@ -293,9 +293,7 @@ namespace Test
                 }
             };
             var communityCards = new List<Card> { };
-            var time = System.DateTime.Now;
             var result = Poker.Hand.CalcEquity(hands, communityCards);
-
             Assert.AreEqual(32.97f, result[0].Total);
             Assert.AreEqual(22.73f, result[0].Win);
             Assert.AreEqual(20.49f, result[0].Split);
@@ -326,7 +324,6 @@ namespace Test
                 }
             };
             var communityCards = new List<Card> { };
-            var time = System.DateTime.Now;
             var result = Poker.Hand.CalcEquity(hands, communityCards);
             Assert.AreEqual(55.28f, result[0].Total);
             Assert.AreEqual(53.32f, result[0].Win);
