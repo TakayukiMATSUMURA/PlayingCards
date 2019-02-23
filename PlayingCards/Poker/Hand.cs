@@ -326,7 +326,17 @@ namespace PlayingCards.Poker
 
         public static bool operator ==(Hand a, Hand b)
         {
-            return a._code == b._code;
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            if (((object)a == null) || ((object)b == null))
+            {
+                return false;
+            }
+
+            return a._code == b?._code;
         }
         public static bool operator !=(Hand a, Hand b)
         {
