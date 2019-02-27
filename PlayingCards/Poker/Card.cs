@@ -23,7 +23,11 @@ namespace PlayingCards.Poker
             return result;
         }
 
-        public Card(int rank, Suit suit) : base(rank, suit)
+        public Card(int rank, Suit suit) : base(rank % 14, suit)
+        {
+        }
+
+        public Card(string card) : base(card)
         {
         }
     }

@@ -50,7 +50,30 @@ namespace PlayingCards
             Suit = suit;
         }
 
-		public override string ToString()
+        public Card(string card)
+        {
+            var rank = card[0] == 'A' ? A :
+                       card[0] == 'K' ? K :
+                       card[0] == 'Q' ? Q :
+                       card[0] == 'J' ? J :
+                       card[0] == 'T' ? T : int.Parse(card[0].ToString());
+            if(!(rank >= A && rank <= K))
+            {
+                throw new ArgumentException("Invalid card rank:" + card[0]);
+            }
+
+            if (!(card[1] == 'c' || card[1] == 'd' || card[1] == 'h' || card[1] == 's'))
+            {
+                throw new ArgumentException("Invalid card suit:" + card[1]);
+            }
+            var suit = card[1] == 'c' ? Suit.Club :
+                       card[1] == 'd' ? Suit.Diamond :
+                       card[1] == 'h' ? Suit.Heart : Suit.Spade;
+            _rank = rank;
+            Suit = suit;
+        }
+
+        public override string ToString()
 		{
             var result = _rank == A ? "A" :
                          _rank == T ? "T" :
