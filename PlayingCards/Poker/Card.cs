@@ -9,9 +9,9 @@ namespace PlayingCards.Poker
 
         public override int Rank => (base.Rank == PlayingCards.Card.A ? A : base.Rank);
 
-        public new static List<Card> GetDeck()
+        public new static List<PlayingCards.Card> GetDeck()
         {
-            var result = new List<Card>();
+            var result = new List<PlayingCards.Card>();
             for (int r = PlayingCards.Card.A; r <= K; r++)
             {
                 foreach (Suit s in Enum.GetValues(typeof(Suit)))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using PlayingCards;
 using Poker = PlayingCards.Poker;
+using System.Threading.Tasks;
 
 namespace Test
 {
@@ -277,7 +278,7 @@ namespace Test
         }
 
         [Test()]
-        public void TestEquity()
+        public async Task TestEquity()
         {
             var hands = new List<List<Card>>
             {
@@ -293,7 +294,7 @@ namespace Test
                 }
             };
             var communityCards = new List<Card> { };
-            var result = Poker.Hand.CalcEquity(hands, communityCards);
+            var result = await Poker.Hand.CalcEquity(hands, communityCards);
             Assert.AreEqual(32.97f, result[0].Total);
             Assert.AreEqual(22.73f, result[0].Win);
             Assert.AreEqual(20.49f, result[0].Split);
@@ -301,9 +302,9 @@ namespace Test
             Assert.AreEqual(56.78f, result[1].Win);
             Assert.AreEqual(20.49f, result[1].Split);
         }
-        
+
         [Test()]
-        public void TestEquityWith3Hands()
+        public async Task TestEquityWith3Hands()
         {
             var hands = new List<List<Card>>
             {
@@ -324,7 +325,7 @@ namespace Test
                 }
             };
             var communityCards = new List<Card> { };
-            var result = Poker.Hand.CalcEquity(hands, communityCards);
+            var result = await Poker.Hand.CalcEquity(hands, communityCards);
             Assert.AreEqual(55.28f, result[0].Total);
             Assert.AreEqual(53.32f, result[0].Win);
             Assert.AreEqual(4.02f, result[0].Split);

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace PlayingCards.Poker
 {
@@ -322,7 +324,79 @@ namespace PlayingCards.Poker
             public float Split;
         }
 
-        public static List<Equity> CalcEquity(List<List<PlayingCards.Card>> hands, List<PlayingCards.Card> communityCards)
+        private static Task<(int[], int[,])> CreateWorker(List<List<PlayingCards.Card>> hands, List<PlayingCards.Card> communityCards, List<PlayingCards.Card> deck, BlockingCollection<int> indexes)
+        {
+            return Task.Run(() =>
+            {
+                var comm = new List<PlayingCards.Card>(communityCards);
+                var restCards = 5 - comm.Count;
+                var counters = new int[hands.Count];
+                var splitCounters = new int[hands.Count, hands.Count + 1];
+
+                int deckIndexes = 0;
+                while (true)
+                {
+                    deckIndexes = indexes.Take();
+                    if (deckIndexes == -1)
+                    {
+                        break;
+                    }
+
+                    for (var i = 0; i < restCards; i++)
+                    {
+                        comm.Add(deck[deckIndexes & 0x3f]);
+                        deckIndexes >>= 6;
+                    }
+
+                    var winners = GetWinners(hands, comm);
+                    if ((winners & 0x8000) == 0)
+                    {
+                        var index = 0;
+                        while (winners % 2 == 0)
+                        {
+                            index++;
+                            winners >>= 1;
+                        }
+                        counters[index]++;
+                    }
+                    else
+                    {
+                        winners &= 0x7fff;
+                        var numPlayer = 0;
+                        var tmp = winners;
+                        while (tmp > 0)
+                        {
+                            if (tmp % 2 == 1)
+                            {
+                                numPlayer++;
+                            }
+                            tmp >>= 1;
+                        }
+
+                        var index = 0;
+                        while (winners > 0)
+                        {
+                            if ((winners % 2) != 0)
+                            {
+                                splitCounters[index, numPlayer]++;
+                            }
+
+                            index++;
+                            winners >>= 1;
+                        }
+                    }
+
+                    for (var i = 0; i < restCards; i++)
+                    {
+                        comm.RemoveAt(comm.Count - 1);
+                    }
+                };
+
+                return (counters, splitCounters);
+            });
+        }
+
+        public static async Task<List<Equity>> CalcEquity(List<List<PlayingCards.Card>> hands, List<PlayingCards.Card> communityCards)
         {
             var result = new List<Equity>();
 
@@ -334,56 +408,28 @@ namespace PlayingCards.Poker
 
             var times = 0;
             var restCards = 5 - communityCards.Count;
-
-            Action updateCounters = () =>
+            var workerNum = 8;
+            var workers = new List<Task<(int[], int[,])>>();
+            var blockingCollections = new List<BlockingCollection<int>>();
+            for (var i = 0; i < workerNum; i++)
             {
-                var winners = GetWinners(hands, communityCards);
-                if ((winners & 0x8000) == 0)
-                {
-                    var index = 0;
-                    while (winners % 2 == 0)
-                    {
-                        index++;
-                        winners >>= 1;
-                    }
-                    counters[index]++;
-                }
-                else
-                {
-                    winners &= 0x7fff;
-                    var numPlayer = 0;
-                    var tmp = winners;
-                    while (tmp > 0)
-                    {
-                        if (tmp % 2 == 1)
-                        {
-                            numPlayer++;
-                        }
-                        tmp >>= 1;
-                    }
+                var collection = new BlockingCollection<int>();
+                blockingCollections.Add(collection);
+                workers.Add(CreateWorker(hands, communityCards, deck, collection));
+            }
 
-                    var index = 0;
-                    while (winners > 0)
-                    {
-                        if ((winners % 2) != 0)
-                        {
-                            splitCounters[index, numPlayer]++;
-                        }
-
-                        index++;
-                        winners >>= 1;
-                    }
-                }
-            };
-
+            var workerIndex = 0;
             if (restCards == 1)
             {
                 for (var i = 0; i < deck.Count; i++)
                 {
-                    communityCards.Add(deck[i]);
-                    updateCounters();
-                    communityCards.RemoveAt(communityCards.Count - 1);
+                    blockingCollections[workerIndex].Add(i);
+                    workerIndex = (workerIndex + 1) % workerNum;
                     times++;
+                }
+                foreach(var collection in blockingCollections)
+                {
+                    collection.Add(-1);
                 }
             }
             else if (restCards == 2)
@@ -392,13 +438,14 @@ namespace PlayingCards.Poker
                 {
                     for (var j = i + 1; j < deck.Count; j++)
                     {
-                        communityCards.Add(deck[i]);
-                        communityCards.Add(deck[j]);
-                        updateCounters();
-                        communityCards.RemoveAt(communityCards.Count - 1);
-                        communityCards.RemoveAt(communityCards.Count - 1);
+                        blockingCollections[workerIndex].Add(j << 6 | i);
+                        workerIndex = (workerIndex + 1) % workerNum;
                         times++;
                     }
+                }
+                foreach (var collection in blockingCollections)
+                {
+                    collection.Add(-1);
                 }
             }
             else if (restCards == 5)
@@ -413,21 +460,33 @@ namespace PlayingCards.Poker
                             {
                                 for (var m = l + 1; m < deck.Count; m++)
                                 {
-                                    communityCards.Add(deck[i]);
-                                    communityCards.Add(deck[j]);
-                                    communityCards.Add(deck[k]);
-                                    communityCards.Add(deck[l]);
-                                    communityCards.Add(deck[m]);
-                                    updateCounters();
-                                    for (var n = 0; n < 5; n++)
-                                    {
-                                        communityCards.RemoveAt(communityCards.Count - 1);
-                                    }
-
+                                    blockingCollections[workerIndex].Add(m << 24 | l << 18 | k << 12 | j << 6 | i);
+                                    workerIndex = (workerIndex + 1) % workerNum;
                                     times++;
                                 }
                             }
                         }
+                    }
+                }
+
+                foreach (var collection in blockingCollections)
+                {
+                    collection.Add(-1);
+                }
+            }
+
+            foreach(var worker in workers)
+            {
+                var (win, split) = await worker;
+                for(var i = 0; i < hands.Count; i++)
+                {
+                    counters[i] += win[i];
+                }
+                for(var i = 0; i < hands.Count; i++)
+                {
+                    for(var j = 0; j < hands.Count + 1; j++)
+                    {
+                        splitCounters[i, j] += split[i, j];
                     }
                 }
             }
@@ -442,7 +501,7 @@ namespace PlayingCards.Poker
                 }
                 split = split * 100 / times;
                 var equ = 0.0f;
-                for(var j = 2; j <= hands.Count; j++)
+                for (var j = 2; j <= hands.Count; j++)
                 {
                     equ += splitCounters[i, j] / j;
                 }
