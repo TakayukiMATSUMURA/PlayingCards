@@ -1,34 +1,31 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace PlayingCards.Poker
+namespace PlayingCards
 {
-    public class Card : PlayingCards.Card
+    public static partial class Poker
     {
-        public new const int A = 14;
-
-        public override int Rank => (base.Rank == PlayingCards.Card.A ? A : base.Rank);
-
-        public new static List<PlayingCards.Card> GetDeck()
+        public class Card : Default.Card
         {
-            var result = new List<PlayingCards.Card>();
-            for (int r = PlayingCards.Card.A; r <= K; r++)
+            public new const int A = 14;
+
+            public override int Rank => (base.Rank == Default.Card.A ? A : base.Rank);
+
+            public Card(int rank, Suit suit) : base(rank % 14, suit)
             {
-                foreach (Suit s in Enum.GetValues(typeof(Suit)))
-                {
-                    result.Add(new Card(r, s));
-                }
             }
 
-            return result;
+            public Card(string card) : base(card)
+            {
+            }
         }
 
-        public Card(int rank, Suit suit) : base(rank % 14, suit)
+        public static List<Default.Card> Deck
         {
-        }
-
-        public Card(string card) : base(card)
-        {
+            get
+            {
+                return Default.Deck.Select(x => (Default.Card)new Card(x.Rank, x.Suit)).ToList();
+            }
         }
     }
 }

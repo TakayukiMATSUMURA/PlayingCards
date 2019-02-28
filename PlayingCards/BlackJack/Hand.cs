@@ -2,40 +2,43 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PlayingCards.BlackJack
+namespace PlayingCards
 {
-    public class Hand : PlayingCards.Hand
+    public static partial class BlackJack
     {
-        public Hand(List<PlayingCards.Card> cards) : base(cards)
+        public class Hand : Default.Hand
         {
-        }
-
-        public bool IsBlackJack => Cards.Any(x => x.Rank == Card.A) && Cards.Any(x => x.Rank == Card.T);
-
-        public bool IsSoft => !IsBlackJack && Cards.Any(x => x.Rank == Card.A) && Cards.Sum(x => x.Rank) <= 11;
-
-        public int Rank => IsBlackJack ? 21 : IsSoft ? Cards.Sum(x => x.Rank) + 10 : Cards.Sum(x => x.Rank);
-
-        public bool IsPair => Cards.Count == 2 && Cards[0].Rank == Cards[1].Rank;
-
-        public List<Hand> Split()
-        {
-            if (!IsPair)
+            public Hand(List<Default.Card> cards) : base(cards)
             {
-                throw new Exception("Cannot Split:" + ToString());
             }
 
-            var result = new List<Hand>();
-            for (int i = 0; i < 2; i++)
+            public bool IsBlackJack => Cards.Any(x => x.Rank == Card.A) && Cards.Any(x => x.Rank == Card.T);
+
+            public bool IsSoft => !IsBlackJack && Cards.Any(x => x.Rank == Card.A) && Cards.Sum(x => x.Rank) <= 11;
+
+            public int Rank => IsBlackJack ? 21 : IsSoft ? Cards.Sum(x => x.Rank) + 10 : Cards.Sum(x => x.Rank);
+
+            public bool IsPair => Cards.Count == 2 && Cards[0].Rank == Cards[1].Rank;
+
+            public List<Hand> Split()
             {
-                result.Add(new Hand(new List<PlayingCards.Card> { Cards[i] }));
-            }
-            return result;
-        }
+                if (!IsPair)
+                {
+                    throw new Exception("Cannot Split:" + ToString());
+                }
 
-        public override string ToString()
-        {
-            return string.Join("", base.ToString()) + ":" + Rank;
+                var result = new List<Hand>();
+                for (int i = 0; i < 2; i++)
+                {
+                    result.Add(new Hand(new List<Default.Card> { Cards[i] }));
+                }
+                return result;
             }
+
+            public override string ToString()
+            {
+                return string.Join("", base.ToString()) + ":" + Rank;
+            }
+        }
     }
 }

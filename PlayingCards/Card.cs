@@ -11,120 +11,126 @@ namespace PlayingCards
         Spade
     }
 
-    public class Card : IComparable
+    public static partial class Default
     {
-        public const int A = 1;
-        public const int T = 10;
-        public const int J = 11;
-        public const int Q = 12;
-        public const int K = 13;
-
-        private readonly int _rank;
-        public virtual int Rank => _rank;
-
-        public readonly Suit Suit;
-
-        public bool IsFace => _rank >= J;
-
-        public static List<Card> GetDeck()
+        public static List<Card> Deck
         {
-            var result = new List<Card>();
-            for (int r = A; r <= K; r++)
+            get
             {
-                foreach(Suit s in Enum.GetValues(typeof(Suit)))
+                var result = new List<Card>();
+                for (int r = Card.A; r <= Card.K; r++)
                 {
-                    result.Add(new Card(r, s));
+                    foreach (Suit s in Enum.GetValues(typeof(Suit)))
+                    {
+                        result.Add(new Card(r, s));
+                    }
                 }
-            }
 
-            return result;
+                return result;
+            }
         }
 
-        public Card(int rank, Suit suit)
+        public class Card : IComparable
         {
-            if(!(rank >= A && rank <= K))
+            public const int A = 1;
+            public const int T = 10;
+            public const int J = 11;
+            public const int Q = 12;
+            public const int K = 13;
+
+            private readonly int _rank;
+            public virtual int Rank => _rank;
+
+            public readonly Suit Suit;
+
+            public bool IsFace => _rank >= J;
+
+            public Card(int rank, Suit suit)
             {
-                throw new ArgumentException("Invalid card rank:" + rank);
+                if (!(rank >= A && rank <= K))
+                {
+                    throw new ArgumentException("Invalid card rank:" + rank);
+                }
+                _rank = rank;
+                Suit = suit;
             }
-            _rank = rank;
-            Suit = suit;
-        }
 
-        public Card(string card)
-        {
-            var rank = card[0] == 'A' ? A :
-                       card[0] == 'K' ? K :
-                       card[0] == 'Q' ? Q :
-                       card[0] == 'J' ? J :
-                       card[0] == 'T' ? T : int.Parse(card[0].ToString());
-            if(!(rank >= A && rank <= K))
+            public Card(string card)
             {
-                throw new ArgumentException("Invalid card rank:" + card[0]);
+                var rank = card[0] == 'A' ? A :
+                           card[0] == 'K' ? K :
+                           card[0] == 'Q' ? Q :
+                           card[0] == 'J' ? J :
+                           card[0] == 'T' ? T : int.Parse(card[0].ToString());
+                if (!(rank >= A && rank <= K))
+                {
+                    throw new ArgumentException("Invalid card rank:" + card[0]);
+                }
+
+                if (!(card[1] == 'c' || card[1] == 'd' || card[1] == 'h' || card[1] == 's'))
+                {
+                    throw new ArgumentException("Invalid card suit:" + card[1]);
+                }
+                var suit = card[1] == 'c' ? Suit.Club :
+                           card[1] == 'd' ? Suit.Diamond :
+                           card[1] == 'h' ? Suit.Heart : Suit.Spade;
+                _rank = rank;
+                Suit = suit;
             }
 
-            if (!(card[1] == 'c' || card[1] == 'd' || card[1] == 'h' || card[1] == 's'))
+            public override string ToString()
             {
-                throw new ArgumentException("Invalid card suit:" + card[1]);
+                var result = _rank == A ? "A" :
+                             _rank == T ? "T" :
+                             _rank == J ? "J" :
+                             _rank == Q ? "Q" :
+                             _rank == K ? "K" : Rank.ToString();
+                result += Suit.ToString().ToLower()[0];
+
+                return result;
             }
-            var suit = card[1] == 'c' ? Suit.Club :
-                       card[1] == 'd' ? Suit.Diamond :
-                       card[1] == 'h' ? Suit.Heart : Suit.Spade;
-            _rank = rank;
-            Suit = suit;
-        }
 
-        public override string ToString()
-		{
-            var result = _rank == A ? "A" :
-                         _rank == T ? "T" :
-                         _rank == J ? "J" :
-                         _rank == Q ? "Q" :
-                         _rank == K ? "K" : Rank.ToString();
-            result += Suit.ToString().ToLower()[0];
+            public override bool Equals(object obj)
+            {
+                return this == (Card)obj;
+            }
 
-            return result;
-		}
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
 
-        public override bool Equals(object obj)
-        {
-            return this == (Card)obj;
-        }
+            public int CompareTo(object obj)
+            {
+                var card = (Card)obj;
+                return this < card ? -1 : this > card ? 1 : 0;
+            }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+            public static bool operator ==(Card a, Card b)
+            {
+                return a.Rank == b.Rank && a.Suit == b.Suit;
+            }
+            public static bool operator !=(Card a, Card b)
+            {
+                return !(a == b);
+            }
 
-        public int CompareTo(object obj)
-        {
-            var card = (Card)obj;
-            return this < card ? -1 : this > card ? 1 : 0;
-        }
-
-        public static bool operator ==(Card a, Card b)
-        {
-            return a.Rank == b.Rank && a.Suit == b.Suit;
-        }
-        public static bool operator !=(Card a, Card b)
-        {
-            return !(a == b);
-        }
-
-        public static bool operator <(Card a, Card b)
-        {
-            return a.Rank < b.Rank || (a.Rank == b.Rank && a.Suit < b.Suit);
-        }
-        public static bool operator <=(Card a, Card b)
-        {
-            return a < b || a == b;
-        }
-        public static bool operator >(Card a, Card b)
-        {
-            return !(a <= b);
-        }
-        public static bool operator >=(Card a, Card b)
-        {
-            return !(a < b);
+            public static bool operator <(Card a, Card b)
+            {
+                return a.Rank < b.Rank || (a.Rank == b.Rank && a.Suit < b.Suit);
+            }
+            public static bool operator <=(Card a, Card b)
+            {
+                return a < b || a == b;
+            }
+            public static bool operator >(Card a, Card b)
+            {
+                return !(a <= b);
+            }
+            public static bool operator >=(Card a, Card b)
+            {
+                return !(a < b);
+            }
         }
     }
 }

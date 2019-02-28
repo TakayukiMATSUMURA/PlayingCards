@@ -1,28 +1,25 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace PlayingCards.BlackJack
+namespace PlayingCards
 {
-    public class Card : PlayingCards.Card
+    public static partial class BlackJack
     {
-        public override int Rank => IsFace ? T : base.Rank;
-
-        public new static List<Card> GetDeck()
+        public static List<Default.Card> Deck
         {
-            var result = new List<Card>();
-            for (int r = 1; r <= K; r++)
+            get
             {
-                foreach (Suit s in Enum.GetValues(typeof(Suit)))
-                {
-                    result.Add(new Card(r, s));
-                }
+                return Default.Deck.Select(x => (Default.Card)new Card(x.Rank, x.Suit)).ToList();
             }
-
-            return result;
         }
 
-        public Card(int rank, Suit suit) : base(rank, suit)
+        public class Card : Default.Card
         {
+            public override int Rank => IsFace ? T : base.Rank;
+
+            public Card(int rank, Suit suit) : base(rank, suit)
+            {
+            }
         }
-	}
+    }
 }
