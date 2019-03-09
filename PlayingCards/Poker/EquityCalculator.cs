@@ -40,6 +40,15 @@ namespace PlayingCards
                 }
 
                 var workerIndex = 0;
+                if (restCards == 0)
+                {
+                    blockingCollections[workerIndex].Add(int.MaxValue);
+                    times++;
+                    foreach (var collection in blockingCollections)
+                    {
+                        collection.Add(-1);
+                    }
+                }
                 if (restCards == 1)
                 {
                     for (var i = 0; i < deck.Count; i++)
@@ -124,9 +133,9 @@ namespace PlayingCards
                     var equ = 0.0f;
                     for (var j = 2; j <= hands.Count; j++)
                     {
-                        equ += splitCounters[i, j] / j;
+                        equ += splitCounters[i, j] * 100 / j;
                     }
-                    equ = equ * 100 / times + win;
+                    equ = equ / times + win;
                     result.Add(new Result { Total = (float)Math.Round(equ, 2), Win = (float)Math.Round(win, 2), Split = (float)Math.Round(split, 2) });
                 }
 

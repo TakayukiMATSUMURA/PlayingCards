@@ -337,5 +337,40 @@ namespace Test
             Assert.AreEqual(10.85f, result[2].Win);
             Assert.AreEqual(5.48f, result[2].Split);
         }
+
+
+        [Test()]
+        public async Task TestEquityOnChop()
+        {
+            var hands = new List<List<Card>>
+            {
+                new List<Card>
+                {
+                    new Poker.Card(Card.A, Suit.Spade),
+                    new Poker.Card(2, Suit.Heart),
+                },
+                new List<Card>
+                {
+                    new Poker.Card(Card.A, Suit.Club),
+                    new Poker.Card(2, Suit.Spade)
+                }
+            };
+            var communityCards = new List<Card>
+            {
+                new Poker.Card(Card.A, Suit.Heart),
+                new Poker.Card(Card.A, Suit.Diamond),
+                new Poker.Card(Card.K, Suit.Heart),
+                new Poker.Card(Card.J, Suit.Spade),
+                new Poker.Card(Card.T, Suit.Spade),
+            };
+
+            var result = await Poker.EquityCalculator.Calc(hands, communityCards);
+            Assert.AreEqual(50f, result[0].Total);
+            Assert.AreEqual(0, result[0].Win);
+            Assert.AreEqual(100f, result[0].Split);
+            Assert.AreEqual(50f, result[1].Total);
+            Assert.AreEqual(0, result[1].Win);
+            Assert.AreEqual(100f, result[1].Split);
+        }
     }
 }
