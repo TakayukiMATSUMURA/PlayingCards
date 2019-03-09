@@ -147,7 +147,24 @@ namespace PlayingCards
                 return Task.Run(() =>
                 {
                     var comm = new List<Default.Card>(communityCards);
+                    var commSize = communityCards.Count;
+                    var rcnt = new int[14];
+                    var scnt = new int[4];
+                    foreach (var card in communityCards)
+                    {
+                        rcnt[card.Rank - 2]++;
+                        scnt[(int)card.Suit]++;
+                    }
+
                     var restCards = 5 - comm.Count;
+                    for (var i = 0; i < restCards; i++)
+                    {
+                        comm.Add(deck[0]);
+                    }
+                    for (var i = 0; i < 2; i++)
+                    {
+                        comm.Add(deck[0]);
+                    }
                     var counters = new int[hands.Count];
                     var splitCounters = new int[hands.Count, hands.Count + 1];
 
@@ -162,11 +179,20 @@ namespace PlayingCards
 
                         for (var i = 0; i < restCards; i++)
                         {
-                            comm.Add(deck[deckIndexes & 0x3f]);
+                            comm[commSize + i] = deck[deckIndexes & 0x3f];
+                            rcnt[comm[commSize + i].Rank - 2]++;
+                            scnt[(int)comm[commSize + i].Suit]++;
                             deckIndexes >>= 6;
                         }
 
-                        var winners = GetWinners(hands, comm);
+                        var winners = GetWinners(hands, comm, rcnt, scnt);
+
+                        for (var i = 0; i < restCards; i++)
+                        {
+                            rcnt[comm[commSize + i].Rank - 2]--;
+                            scnt[(int)comm[commSize + i].Suit]--;
+                        }
+
                         if ((winners & 0x8000) == 0)
                         {
                             var index = 0;
@@ -203,20 +229,15 @@ namespace PlayingCards
                                 winners >>= 1;
                             }
                         }
-
-                        for (var i = 0; i < restCards; i++)
-                        {
-                            comm.RemoveAt(comm.Count - 1);
-                        }
                     };
 
                     return (counters, splitCounters);
                 });
             }
 
-            private static int GetWinners(List<List<Default.Card>> hands, List<Default.Card> communityCards)
+            private static int GetWinners(List<List<Default.Card>> hands, List<Default.Card> communityCards, int[] rcnt, int[] scnt)
             {
-                var codes = GetHandCodes(hands, communityCards);
+                var codes = GetHandCodes(hands, communityCards, rcnt, scnt);
                 var maxCode = codes[0];
                 var result = 1;
                 for (var i = 1; i < codes.Count; i++)
@@ -235,27 +256,27 @@ namespace PlayingCards
                 return result;
             }
 
-            private static List<ulong> GetHandCodes(List<List<Default.Card>> hands, List<Default.Card> communityCards)
+            private static List<ulong> GetHandCodes(List<List<Default.Card>> hands, List<Default.Card> communityCards, int[] rcnt, int[] scnt)
             {
-                var communityCardSize = communityCards.Count;
-                communityCards.Add(hands[0][0]);
-                communityCards.Add(hands[0][1]);
                 var result = new List<ulong>();
-
                 foreach (var hand in hands)
                 {
                     for (var i = 0; i < 2; i++)
                     {
-                        communityCards[communityCardSize + i] = hand[i];
+                        communityCards[5 + i] = hand[i];
+                        rcnt[communityCards[5 + i].Rank - 2]++;
+                        scnt[(int)communityCards[5 + i].Suit]++;
                     }
-                    result.Add(Hand.Encode(communityCards));
+                    result.Add(Hand.Encode(communityCards, rcnt, scnt));
+                    for (var i = 0; i < 2; i++)
+                    {
+                        rcnt[communityCards[5 + i].Rank - 2]--;
+                        scnt[(int)communityCards[5 + i].Suit]--;
+                    }
                 }
-
-                communityCards.RemoveRange(communityCardSize, 2);
 
                 return result;
             }
-
         }
     }
 }

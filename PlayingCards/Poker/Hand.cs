@@ -42,18 +42,21 @@ namespace PlayingCards
                 return base.ToString() + " " + Rank.ToString();
             }
 
-            public static ulong Encode(List<Default.Card> cards)
+            public static ulong Encode(List<Default.Card> cards, int[] rcnt = null, int[] scnt = null)
             {
                 ulong result = 0;
                 uint bitmap = 0;
                 uint mask = 0;
-                var rcnt = new int[13];
-                var scnt = new int[4];
-
-                foreach (var card in cards)
+                if (rcnt == null)
                 {
-                    rcnt[card.Rank - 2]++;
-                    scnt[(int)card.Suit]++;
+                    rcnt = new int[13];
+                    scnt = new int[4];
+
+                    foreach (var card in cards)
+                    {
+                        rcnt[card.Rank - 2]++;
+                        scnt[(int)card.Suit]++;
+                    }
                 }
 
                 var s = -1;
