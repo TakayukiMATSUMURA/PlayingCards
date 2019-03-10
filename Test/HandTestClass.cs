@@ -1,12 +1,10 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
-using PlayingCards;
-using Poker = PlayingCards.Poker;
 using Card = PlayingCards.Default.Card;
 using System.Threading.Tasks;
 
-namespace Test
+namespace PlayingCards.Test
 {
     [TestFixture()]
     public class HandTestClass

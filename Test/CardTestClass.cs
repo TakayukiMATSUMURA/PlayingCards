@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
-using PlayingCards;
 
-namespace Test
+namespace PlayingCards.Test
 {
     using Card = Default.Card;
 
