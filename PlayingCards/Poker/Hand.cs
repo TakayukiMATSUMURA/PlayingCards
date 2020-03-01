@@ -218,11 +218,11 @@ namespace PlayingCards
                     return (result << 4 << ((int)(HandRank.OnePair) * 4));
                 }
 
-                for (uint i = 12; i >= 0; i--)
+                for (int i = 12; i >= 0; i--)
                 {
                     if (rcnt[i] > 0)
                     {
-                        result = (result << 4) | (i + 2);
+                        result = (result << 4) | (uint)(i + 2);
                         if (result >= 0x10000) break;
                     }
                 }
