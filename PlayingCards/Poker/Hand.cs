@@ -103,7 +103,9 @@ namespace PlayingCards
                             return (ulong)(14 - i) << (4 * 4) << ((int)(HandRank.StraightFlush) * 4);
                         }
                     }
-                    if (bitmap == 0x100f) // 1 0000 00000 1111 = A5432
+
+                    mask = 0x100f;
+                    if ((bitmap & mask) == mask) // 1 0000 00000 1111 = A5432
                     {
                         return (ulong)5 << 0x10 << ((int)(HandRank.StraightFlush) * 4);
                     }
