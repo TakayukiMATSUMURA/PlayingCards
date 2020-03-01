@@ -293,7 +293,7 @@ namespace PlayingCards.Test
                 }
             };
             var communityCards = new List<Card> { };
-            var result = await Poker.EquityCalculator.Calc(hands, communityCards);
+            var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
             Assert.AreEqual(32.97f, result[0].Total);
             Assert.AreEqual(22.73f, result[0].Win);
             Assert.AreEqual(20.49f, result[0].Split);
@@ -324,7 +324,7 @@ namespace PlayingCards.Test
                 }
             };
             var communityCards = new List<Card> { };
-            var result = await Poker.EquityCalculator.Calc(hands, communityCards);
+            var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
             Assert.AreEqual(55.28f, result[0].Total);
             Assert.AreEqual(53.32f, result[0].Win);
             Assert.AreEqual(4.02f, result[0].Split);
@@ -362,7 +362,7 @@ namespace PlayingCards.Test
                 new Poker.Card(Card.T, Suit.Spade),
             };
 
-            var result = await Poker.EquityCalculator.Calc(hands, communityCards);
+            var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
             Assert.AreEqual(50f, result[0].Total);
             Assert.AreEqual(0, result[0].Win);
             Assert.AreEqual(100f, result[0].Split);

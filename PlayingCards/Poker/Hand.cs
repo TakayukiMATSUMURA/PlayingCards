@@ -18,10 +18,12 @@ namespace PlayingCards
             StraightFlush
         }
 
-        public class Hand : Default.Hand
+        public partial class Hand : Default.Hand
         {
-            protected ulong _code { get; set; }
-            public HandRank Rank => GetRank(_code);
+            protected readonly ulong _code;
+            public HandRank Rank => Cards.Count >= 5 ? GetRank(_code) : HandRank.HighCard;
+
+            public float Equity { get; private set; } = -1;
 
             public Hand()
             {
@@ -33,13 +35,21 @@ namespace PlayingCards
 
             public Hand(List<Default.Card> cards)
             {
-                _code = Encode(cards);
-                Cards = GetUsedCards(_code, cards);
+                if (cards.Count >= 5)
+                {
+                    _code = Encode(cards);
+                    Cards = GetUsedCards(_code, cards);
+                }
+                else
+                {
+                    _code = 0;
+                    Cards = cards;
+                }
             }
 
             public override string ToString()
             {
-                return base.ToString() + " " + Rank.ToString();
+                return base.ToString() + " " + Rank.ToString() + (Equity > 0 ? $" {Equity}%" : "");
             }
 
             public static ulong Encode(List<Default.Card> cards, int[] rcnt = null, int[] scnt = null)
@@ -49,7 +59,7 @@ namespace PlayingCards
                 uint mask = 0;
                 if (rcnt == null)
                 {
-                    rcnt = new int[13];
+                    rcnt = new int[14];
                     scnt = new int[4];
 
                     foreach (var card in cards)
