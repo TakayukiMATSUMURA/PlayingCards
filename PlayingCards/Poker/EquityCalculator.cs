@@ -21,7 +21,7 @@ namespace PlayingCards
 
                 public static async Task Calc(List<Hand> hands, List<Default.Card> communityCards)
                 {
-                    var cards = hands.Select(x => x.Cards).ToList();
+                    var cards = hands.Select(x => x.PocketCards).ToList();
                     var result = await Calc(cards, communityCards);
                     for(var i = 0; i < hands.Count; i++)
                     {

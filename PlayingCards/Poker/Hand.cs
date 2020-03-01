@@ -20,8 +20,11 @@ namespace PlayingCards
 
         public partial class Hand : Default.Hand
         {
-            protected readonly ulong _code;
+            protected ulong _code;
             public HandRank Rank => Cards.Count >= 5 ? GetRank(_code) : HandRank.HighCard;
+
+            public readonly List<Default.Card> PocketCards;
+            public readonly List<Default.Card> CommunityCards;
 
             public float Equity { get; private set; } = -1;
 
@@ -29,12 +32,26 @@ namespace PlayingCards
             {
             }
 
-            public Hand(List<Default.Card> pocketCards, List<Default.Card> communityCards) : this(new List<List<Default.Card>> { pocketCards, communityCards }.SelectMany(x => x).ToList())
+            public Hand(List<Default.Card> pocketCards, List<Default.Card> communityCards)
             {
+                if(pocketCards[0] < pocketCards[1])
+                {
+                    pocketCards.Add(pocketCards[0]);
+                    pocketCards.RemoveAt(0);
+                }
+                PocketCards = pocketCards;
+                CommunityCards = communityCards;
+                Update();
             }
 
-            public Hand(List<Default.Card> cards)
+            public override string ToString()
             {
+                return base.ToString() + " " + Rank.ToString() + (Equity > 0 ? $" {Equity}%" : "");
+            }
+
+            public void Update()
+            {
+                var cards = new List<List<Default.Card>> { PocketCards, CommunityCards }.SelectMany(x => x).ToList();
                 if (cards.Count >= 5)
                 {
                     _code = Encode(cards);
@@ -45,11 +62,6 @@ namespace PlayingCards
                     _code = 0;
                     Cards = cards;
                 }
-            }
-
-            public override string ToString()
-            {
-                return base.ToString() + " " + Rank.ToString() + (Equity > 0 ? $" {Equity}%" : "");
             }
 
             public static ulong Encode(List<Default.Card> cards, int[] rcnt = null, int[] scnt = null)
