@@ -28,7 +28,7 @@ namespace PlayingCards
 
             public float Equity { get; private set; } = -1;
 
-            public Hand()
+            public Hand(List<Default.Card> cards) : this(cards, new List<Default.Card>())
             {
             }
 
