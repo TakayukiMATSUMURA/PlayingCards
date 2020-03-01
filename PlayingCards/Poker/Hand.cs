@@ -34,12 +34,9 @@ namespace PlayingCards
 
             public Hand(List<Default.Card> pocketCards, List<Default.Card> communityCards)
             {
-                if(pocketCards[0] < pocketCards[1])
-                {
-                    pocketCards.Add(pocketCards[0]);
-                    pocketCards.RemoveAt(0);
-                }
-                PocketCards = pocketCards;
+                PocketCards = new List<Default.Card>(pocketCards);
+                PocketCards.Sort();
+                PocketCards.Reverse();
                 CommunityCards = communityCards;
                 Update();
             }
