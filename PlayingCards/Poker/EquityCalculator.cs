@@ -17,6 +17,7 @@ namespace PlayingCards
                     public float Total;
                     public float Win;
                     public float Split;
+                    public List<Default.Card> Outs = new List<Default.Card>();
                 }
 
                 public static async Task Calc(List<Hand> hands, List<Default.Card> communityCards)
@@ -26,6 +27,7 @@ namespace PlayingCards
                     for(var i = 0; i < hands.Count; i++)
                     {
                         hands[i].Equity = result[i].Total;
+                        hands[i].Outs = result[i].Outs;
                     }
                 }
 
@@ -151,6 +153,63 @@ namespace PlayingCards
                         result.Add(new Result { Total = (float)Math.Round(equ, 2), Win = (float)Math.Round(win, 2), Split = (float)Math.Round(split, 2) });
                     }
 
+                    // アウツの計算
+                    if(communityCards.Count == 3 || communityCards.Count == 4)
+                    {
+                        var currentWinners = GetWinners(hands, communityCards);
+                        var currentWinner = 0;
+                        while((currentWinners & 0x1) == 0)
+                        {
+                            currentWinner++;
+                            currentWinners = currentWinners >> 1;
+                        }
+
+                        if ((currentWinner & 0x8000) != 0) return result;
+
+                        for(var i = deck.Count - 1; i >= 0; i--)
+                        {
+                            var candidate = deck[i];
+                            communityCards.Add(candidate);
+                            var winner = GetWinners(hands, communityCards);
+                            communityCards.Remove(candidate);
+
+                            if ((winner & 0x8000) == 0)
+                            {
+                                var index = 0;
+                                while((winner & 0x1) == 0)
+                                {
+                                    index++;
+                                    winner = winner >> 1;
+                                }
+
+                                if(currentWinner != index)
+                                {
+                                    result[index].Outs.Add(candidate);
+                                }
+                            }
+                        }
+
+                        // アウツのソート(強い役になるものから順に並べる)
+                        for(var i = 0; i < hands.Count; i++)
+                        {
+                            var hand = hands[i];
+                            if(result[i].Outs.Any())
+                            {
+                                result[i].Outs.Sort((x, y) =>
+                                {
+                                    var cards = new List<Default.Card>(communityCards);
+                                    cards.AddRange(hand);
+                                    cards.Add(x);
+                                    var code0 = Encode(cards);
+                                    cards.Remove(x);
+                                    cards.Add(y);
+                                    var code1 = Encode(cards);
+                                    return code1 > code0 ? 1 : code1 == code0 ? x > y ? -1 : 1 : -1;
+                                });
+                            }
+                        }
+                    }
+
                     return result;
                 }
 
@@ -256,11 +315,26 @@ namespace PlayingCards
                     var result = new List<ulong>();
                     foreach (var hand in hands)
                     {
-                        for (var i = 0; i < 2; i++)
+                        if (communityCards.Count == 7)
                         {
-                            communityCards[5 + i] = hand[i];
+                            for (var i = 0; i < 2; i++)
+                            {
+                                communityCards[5 + i] = hand[i];
+                            }
+                            result.Add(Encode(communityCards));
                         }
-                        result.Add(Encode(communityCards));
+                        else
+                        {
+                            for (var i = 0; i < 2; i++)
+                            {
+                                communityCards.Add(hand[i]);
+                            }
+                            result.Add(Encode(communityCards));
+                            for (var i = 0; i < 2; i++)
+                            {
+                                communityCards.Remove(hand[i]);
+                            }
+                        }
                     }
 
                     return result;

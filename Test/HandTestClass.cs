@@ -336,7 +336,6 @@ namespace PlayingCards.Test
             Assert.AreEqual(5.48f, result[2].Split);
         }
 
-
         [Test()]
         public async Task TestEquityOnChop()
         {
@@ -369,6 +368,55 @@ namespace PlayingCards.Test
             Assert.AreEqual(50f, result[1].Total);
             Assert.AreEqual(0, result[1].Win);
             Assert.AreEqual(100f, result[1].Split);
+        }
+
+        [Test()]
+        public async Task TestOuts()
+        {
+            // WSOP 2019 last hand
+            var hands = new List<List<Card>>
+            {
+                new List<Card>
+                {
+                    new Poker.Card(8, Suit.Spade),
+                    new Poker.Card(4, Suit.Spade)
+                },
+                new List<Card>
+                {
+                    new Poker.Card(Card.K, Suit.Heart),
+                    new Poker.Card(Card.K, Suit.Club)
+                }
+            };
+            var communityCards = new List<Card>
+            {
+                new Poker.Card(Card.T, Suit.Spade),
+                new Poker.Card(2, Suit.Diamond),
+                new Poker.Card(6, Suit.Spade),
+                new Poker.Card(9, Suit.Club)
+            };
+
+            var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
+            var outs = new List<Card>
+            {
+                new Poker.Card(Card.A, Suit.Spade),
+                new Poker.Card(Card.K, Suit.Spade),
+                new Poker.Card(Card.Q, Suit.Spade),
+                new Poker.Card(Card.J, Suit.Spade),
+                new Poker.Card(9, Suit.Spade),
+                new Poker.Card(7, Suit.Spade),
+                new Poker.Card(5, Suit.Spade),
+                new Poker.Card(3, Suit.Spade),
+                new Poker.Card(2, Suit.Spade),
+                new Poker.Card(7, Suit.Heart),
+                new Poker.Card(7, Suit.Diamond),
+                new Poker.Card(7, Suit.Club)
+            };
+
+            Assert.AreEqual(outs.Count, result[0].Outs.Count);
+            for(var i = 0; i < outs.Count; i++)
+            {
+                Assert.AreEqual(outs[i], result[0].Outs[i]);
+            }
         }
     }
 }

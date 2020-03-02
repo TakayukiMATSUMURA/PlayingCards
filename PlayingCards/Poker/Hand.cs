@@ -27,6 +27,7 @@ namespace PlayingCards
             public readonly List<Default.Card> CommunityCards;
 
             public float Equity { get; private set; } = -1;
+            public List<Default.Card> Outs { get; private set; }
 
             public Hand(List<Default.Card> cards) : this(cards, new List<Default.Card>())
             {
@@ -43,7 +44,13 @@ namespace PlayingCards
 
             public override string ToString()
             {
-                return string.Join("", PocketCards.Select(x => x.ToString()).ToArray()) + " " + Rank.ToString() + (Equity > 0 ? $" {Equity}%" : "");
+                var result = string.Join("", PocketCards.Select(x => x.ToString()).ToArray()) + " " + Rank.ToString() + (Equity > 0 ? $" {Equity}%" : "");
+                if(Outs.Any())
+                {
+                    result += $" Outs:[{string.Join(",", Outs.Select(x => x.ToString()).ToArray())}]";
+                }
+
+                return result;
             }
 
             public void Update()
