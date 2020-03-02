@@ -160,14 +160,6 @@ namespace PlayingCards
                     {
                         var comm = new List<Default.Card>(communityCards);
                         var commSize = communityCards.Count;
-                        var rcnt = new int[14];
-                        var scnt = new int[4];
-                        foreach (var card in communityCards)
-                        {
-                            rcnt[card.Rank - 2]++;
-                            scnt[(int)card.Suit]++;
-                        }
-
                         var restCards = 5 - comm.Count;
                         for (var i = 0; i < restCards; i++)
                         {
@@ -192,19 +184,10 @@ namespace PlayingCards
                             for (var i = 0; i < restCards; i++)
                             {
                                 comm[commSize + i] = deck[deckIndexes & 0x3f];
-                                rcnt[comm[commSize + i].Rank - 2]++;
-                                scnt[(int)comm[commSize + i].Suit]++;
                                 deckIndexes >>= 6;
                             }
 
-                            var winners = GetWinners(hands, comm, rcnt, scnt);
-
-                            for (var i = 0; i < restCards; i++)
-                            {
-                                rcnt[comm[commSize + i].Rank - 2]--;
-                                scnt[(int)comm[commSize + i].Suit]--;
-                            }
-
+                            var winners = GetWinners(hands, comm);
                             if ((winners & 0x8000) == 0)
                             {
                                 var index = 0;
@@ -247,9 +230,9 @@ namespace PlayingCards
                     });
                 }
 
-                private static int GetWinners(List<List<Default.Card>> hands, List<Default.Card> communityCards, int[] rcnt, int[] scnt)
+                private static int GetWinners(List<List<Default.Card>> hands, List<Default.Card> communityCards)
                 {
-                    var codes = GetHandCodes(hands, communityCards, rcnt, scnt);
+                    var codes = GetHandCodes(hands, communityCards);
                     var maxCode = codes[0];
                     var result = 1;
                     for (var i = 1; i < codes.Count; i++)
@@ -268,7 +251,7 @@ namespace PlayingCards
                     return result;
                 }
 
-                private static List<ulong> GetHandCodes(List<List<Default.Card>> hands, List<Default.Card> communityCards, int[] rcnt, int[] scnt)
+                private static List<ulong> GetHandCodes(List<List<Default.Card>> hands, List<Default.Card> communityCards)
                 {
                     var result = new List<ulong>();
                     foreach (var hand in hands)
@@ -276,15 +259,8 @@ namespace PlayingCards
                         for (var i = 0; i < 2; i++)
                         {
                             communityCards[5 + i] = hand[i];
-                            rcnt[communityCards[5 + i].Rank - 2]++;
-                            scnt[(int)communityCards[5 + i].Suit]++;
                         }
-                        result.Add(Hand.Encode(communityCards, rcnt, scnt));
-                        for (var i = 0; i < 2; i++)
-                        {
-                            rcnt[communityCards[5 + i].Rank - 2]--;
-                            scnt[(int)communityCards[5 + i].Suit]--;
-                        }
+                        result.Add(Encode(communityCards));
                     }
 
                     return result;

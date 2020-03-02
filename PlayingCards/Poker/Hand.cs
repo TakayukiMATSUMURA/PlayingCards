@@ -66,16 +66,14 @@ namespace PlayingCards
                 ulong result = 0;
                 uint bitmap = 0;
                 uint mask = 0;
-                if (rcnt == null)
-                {
-                    rcnt = new int[14];
-                    scnt = new int[4];
 
-                    foreach (var card in cards)
-                    {
-                        rcnt[card.Rank - 2]++;
-                        scnt[(int)card.Suit]++;
-                    }
+                rcnt = new int[14];
+                scnt = new int[4];
+
+                foreach (var card in cards)
+                {
+                    rcnt[card.Rank - 2]++;
+                    scnt[(int)card.Suit]++;
                 }
 
                 var s = -1;
