@@ -14,11 +14,11 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(Card.A, Suit.Diamond),
-                new Poker.Card(Card.K, Suit.Club),
-                new Poker.Card(6, Suit.Diamond),
-                new Poker.Card(4, Suit.Spade),
-                new Poker.Card(2, Suit.Heart)
+                new Poker.Card("Ad"),
+                new Poker.Card("Kc"),
+                new Poker.Card("6d"),
+                new Poker.Card("4s"),
+                new Poker.Card("2h")
             };
 
             var hand = new Poker.Hand(cards);
@@ -30,12 +30,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(Card.T, Suit.Diamond),
-                new Poker.Card(Card.A, Suit.Club),
-                new Poker.Card(6, Suit.Diamond),
-                new Poker.Card(4, Suit.Spade),
-                new Poker.Card(Card.T, Suit.Club),
-                new Poker.Card(2, Suit.Heart)
+                new Poker.Card("Td"),
+                new Poker.Card("Ac"),
+                new Poker.Card("6d"),
+                new Poker.Card("4s"),
+                new Poker.Card("Tc"),
+                new Poker.Card("2h")
             };
 
             var hand = new Poker.Hand(cards);
@@ -59,12 +59,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(6, Suit.Diamond),
-                new Poker.Card(Card.K, Suit.Diamond),
-                new Poker.Card(6, Suit.Spade),
-                new Poker.Card(2, Suit.Heart),
-                new Poker.Card(Card.A, Suit.Heart),
-                new Poker.Card(Card.K, Suit.Club),
+                new Poker.Card("6d"),
+                new Poker.Card("Kd"),
+                new Poker.Card("6s"),
+                new Poker.Card("2h"),
+                new Poker.Card("Ah"),
+                new Poker.Card("Kc")
             };
 
             var hand = new Poker.Hand(cards);
@@ -88,12 +88,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(Card.A, Suit.Diamond),
-                new Poker.Card(Card.A, Suit.Club),
-                new Poker.Card(6, Suit.Spade),
-                new Poker.Card(Card.A, Suit.Heart),
-                new Poker.Card(2, Suit.Heart),
-                new Poker.Card(3, Suit.Spade)
+                new Poker.Card("Ad"),
+                new Poker.Card("Ac"),
+                new Poker.Card("6s"),
+                new Poker.Card("Ah"),
+                new Poker.Card("2h"),
+                new Poker.Card("3s")
             };
 
             var hand = new Poker.Hand(cards);
@@ -117,12 +117,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(5, Suit.Spade),
-                new Poker.Card(8, Suit.Diamond),
-                new Poker.Card(6, Suit.Club),
-                new Poker.Card(6, Suit.Heart),
-                new Poker.Card(4, Suit.Heart),
-                new Poker.Card(7, Suit.Club)
+                new Poker.Card("5s"),
+                new Poker.Card("8d"),
+                new Poker.Card("6c"),
+                new Poker.Card("6h"),
+                new Poker.Card("4h"),
+                new Poker.Card("7c")
             };
 
             var hand = new Poker.Hand(cards);
@@ -144,12 +144,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(4, Suit.Heart),
-                new Poker.Card(Card.A, Suit.Diamond),
-                new Poker.Card(5, Suit.Club),
-                new Poker.Card(Card.T, Suit.Club),
-                new Poker.Card(2, Suit.Heart),
-                new Poker.Card(3, Suit.Spade)
+                new Poker.Card("4h"),
+                new Poker.Card("Ad"),
+                new Poker.Card("5c"),
+                new Poker.Card("Tc"),
+                new Poker.Card("2h"),
+                new Poker.Card("3s")
             };
             var hand = new Poker.Hand(cards);
             Assert.AreEqual(Poker.HandRank.Straight, hand.Rank);
@@ -172,12 +172,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(6, Suit.Diamond),
-                new Poker.Card(Card.A, Suit.Diamond),
-                new Poker.Card(Card.K, Suit.Diamond),
-                new Poker.Card(6, Suit.Heart),
-                new Poker.Card(4, Suit.Diamond),
-                new Poker.Card(2, Suit.Diamond)
+                new Poker.Card("6d"),
+                new Poker.Card("Ad"),
+                new Poker.Card("Kd"),
+                new Poker.Card("6h"),
+                new Poker.Card("4d"),
+                new Poker.Card("2d")
             };
 
             var hand = new Poker.Hand(cards);
@@ -198,12 +198,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(Card.A, Suit.Diamond),
-                new Poker.Card(6, Suit.Heart),
-                new Poker.Card(Card.A, Suit.Club),
-                new Poker.Card(6, Suit.Spade),
-                new Poker.Card(8, Suit.Heart),
-                new Poker.Card(6, Suit.Club)
+                new Poker.Card("Ad"),
+                new Poker.Card("6h"),
+                new Poker.Card("Ac"),
+                new Poker.Card("6s"),
+                new Poker.Card("8h"),
+                new Poker.Card("6c")
             };
 
             var hand = new Poker.Hand(cards);
@@ -228,12 +228,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(Card.A, Suit.Spade),
-                new Poker.Card(Card.T, Suit.Club),
-                new Poker.Card(Card.A, Suit.Heart),
-                new Poker.Card(Card.A, Suit.Diamond),
-                new Poker.Card(6, Suit.Club),
-                new Poker.Card(Card.A, Suit.Club),
+                new Poker.Card("As"),
+                new Poker.Card("Tc"),
+                new Poker.Card("Ah"),
+                new Poker.Card("Ad"),
+                new Poker.Card("6c"),
+                new Poker.Card("Ac")
             };
 
             var hand = new Poker.Hand(cards);
@@ -255,12 +255,12 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card(Card.J, Suit.Spade),
-                new Poker.Card(Card.T, Suit.Spade),
-                new Poker.Card(8, Suit.Spade),
-                new Poker.Card(9, Suit.Diamond),
-                new Poker.Card(Card.Q, Suit.Spade),
-                new Poker.Card(9, Suit.Spade)
+                new Poker.Card("Js"),
+                new Poker.Card("Ts"),
+                new Poker.Card("8s"),
+                new Poker.Card("9d"),
+                new Poker.Card("Qs"),
+                new Poker.Card("9s")
             };
 
             var hand = new Poker.Hand(cards);
@@ -283,13 +283,13 @@ namespace PlayingCards.Test
             {
                 new List<Card>
                 {
-                    new Poker.Card(Card.A, Suit.Heart),
-                    new Poker.Card(2, Suit.Diamond)
+                    new Poker.Card("As"),
+                    new Poker.Card("2d")
                 },
                 new List<Card>
                 {
-                    new Poker.Card(Card.A, Suit.Diamond),
-                    new Poker.Card(8, Suit.Diamond)
+                    new Poker.Card("Ad"),
+                    new Poker.Card("8d")
                 }
             };
             var communityCards = new List<Card> { };
@@ -309,18 +309,18 @@ namespace PlayingCards.Test
             {
                 new List<Card>
                 {
-                    new Poker.Card(Card.A, Suit.Spade),
-                    new Poker.Card(Card.K, Suit.Heart),
+                    new Poker.Card("As"),
+                    new Poker.Card("Kh")
                 },
                 new List<Card>
                 {
-                    new Poker.Card(9, Suit.Diamond),
-                    new Poker.Card(8, Suit.Diamond)
+                    new Poker.Card("9d"),
+                    new Poker.Card("8d")
                 },
                 new List<Card>
                 {
-                    new Poker.Card(Card.A, Suit.Club),
-                    new Poker.Card(8, Suit.Spade)
+                    new Poker.Card("Ac"),
+                    new Poker.Card("8s")
                 }
             };
             var communityCards = new List<Card> { };
@@ -343,22 +343,22 @@ namespace PlayingCards.Test
             {
                 new List<Card>
                 {
-                    new Poker.Card(Card.A, Suit.Spade),
-                    new Poker.Card(2, Suit.Heart),
+                    new Poker.Card("As"),
+                    new Poker.Card("2h")
                 },
                 new List<Card>
                 {
-                    new Poker.Card(Card.A, Suit.Club),
-                    new Poker.Card(2, Suit.Spade)
+                    new Poker.Card("Ac"),
+                    new Poker.Card("2s")
                 }
             };
             var communityCards = new List<Card>
             {
-                new Poker.Card(Card.A, Suit.Heart),
-                new Poker.Card(Card.A, Suit.Diamond),
-                new Poker.Card(Card.K, Suit.Heart),
-                new Poker.Card(Card.J, Suit.Spade),
-                new Poker.Card(Card.T, Suit.Spade),
+                new Poker.Card("Ah"),
+                new Poker.Card("Ad"),
+                new Poker.Card("Kh"),
+                new Poker.Card("Js"),
+                new Poker.Card("Ts")
             };
 
             var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
@@ -378,38 +378,38 @@ namespace PlayingCards.Test
             {
                 new List<Card>
                 {
-                    new Poker.Card(8, Suit.Spade),
-                    new Poker.Card(4, Suit.Spade)
+                    new Poker.Card("8s"),
+                    new Poker.Card("4s")
                 },
                 new List<Card>
                 {
-                    new Poker.Card(Card.K, Suit.Heart),
-                    new Poker.Card(Card.K, Suit.Club)
+                    new Poker.Card("Kh"),
+                    new Poker.Card("Kc")
                 }
             };
             var communityCards = new List<Card>
             {
-                new Poker.Card(Card.T, Suit.Spade),
-                new Poker.Card(2, Suit.Diamond),
-                new Poker.Card(6, Suit.Spade),
-                new Poker.Card(9, Suit.Club)
+                new Poker.Card("Ts"),
+                new Poker.Card("2d"),
+                new Poker.Card("6s"),
+                new Poker.Card("9c")
             };
 
             var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
             var outs = new List<Card>
             {
-                new Poker.Card(Card.A, Suit.Spade),
-                new Poker.Card(Card.K, Suit.Spade),
-                new Poker.Card(Card.Q, Suit.Spade),
-                new Poker.Card(Card.J, Suit.Spade),
-                new Poker.Card(9, Suit.Spade),
-                new Poker.Card(7, Suit.Spade),
-                new Poker.Card(5, Suit.Spade),
-                new Poker.Card(3, Suit.Spade),
-                new Poker.Card(2, Suit.Spade),
-                new Poker.Card(7, Suit.Heart),
-                new Poker.Card(7, Suit.Diamond),
-                new Poker.Card(7, Suit.Club)
+                new Poker.Card("As"),
+                new Poker.Card("Ks"),
+                new Poker.Card("Qs"),
+                new Poker.Card("Js"),
+                new Poker.Card("9s"),
+                new Poker.Card("7s"),
+                new Poker.Card("5s"),
+                new Poker.Card("3s"),
+                new Poker.Card("2s"),
+                new Poker.Card("7h"),
+                new Poker.Card("7d"),
+                new Poker.Card("7c")
             };
 
             Assert.AreEqual(outs.Count, result[0].Outs.Count);
