@@ -44,7 +44,11 @@ namespace PlayingCards
 
             public override string ToString()
             {
-                var result = string.Join("", PocketCards.Select(x => x.ToString()).ToArray()) + " " + Rank.ToString() + (Equity > 0 ? $" {Equity}%" : "");
+                var result = $"[{string.Join(",", PocketCards.Select(x => x.ToString()).ToArray())}] {Rank.ToString()}";
+                if (Equity >= 0)
+                {
+                    result += $" {Equity}% ";
+                }
                 if(Outs.Any())
                 {
                     result += $" Outs:[{string.Join(",", Outs.Select(x => x.ToString()).ToArray())}]";
