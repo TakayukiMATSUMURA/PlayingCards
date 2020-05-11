@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Card = PlayingCards.Default.Card;
 using System.Threading.Tasks;
 
-namespace PlayingCards.Test
+namespace PlayingCards.Poker.Test
 {
     [TestFixture()]
     public class HandTestClass
@@ -14,15 +13,15 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("Ad"),
-                new Poker.Card("Kc"),
-                new Poker.Card("6d"),
-                new Poker.Card("4s"),
-                new Poker.Card("2h")
+                new Card("Ad"),
+                new Card("Kc"),
+                new Card("6d"),
+                new Card("4s"),
+                new Card("2h")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.HighCard, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.HighCard, hand.Rank);
         }
 
         [Test()]
@@ -30,16 +29,16 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("Td"),
-                new Poker.Card("Ac"),
-                new Poker.Card("6d"),
-                new Poker.Card("4s"),
-                new Poker.Card("Tc"),
-                new Poker.Card("2h")
+                new Card("Td"),
+                new Card("Ac"),
+                new Card("6d"),
+                new Card("4s"),
+                new Card("Tc"),
+                new Card("2h")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.OnePair, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.OnePair, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(5);
@@ -59,16 +58,16 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("6d"),
-                new Poker.Card("Kd"),
-                new Poker.Card("6s"),
-                new Poker.Card("2h"),
-                new Poker.Card("Ah"),
-                new Poker.Card("Kc")
+                new Card("6d"),
+                new Card("Kd"),
+                new Card("6s"),
+                new Card("2h"),
+                new Card("Ah"),
+                new Card("Kc")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.TwoPair, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.TwoPair, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(3);
@@ -88,22 +87,22 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("Ad"),
-                new Poker.Card("Ac"),
-                new Poker.Card("6s"),
-                new Poker.Card("Ah"),
-                new Poker.Card("2h"),
-                new Poker.Card("3s")
+                new Card("Ad"),
+                new Card("Ac"),
+                new Card("6s"),
+                new Card("Ah"),
+                new Card("2h"),
+                new Card("3s")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.ThreeOfAKind, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.ThreeOfAKind, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(4);
             cards.Sort();
             cards.Reverse();
-            var aces = cards.Where(x => x.Rank == Poker.Card.A).ToList();
+            var aces = cards.Where(x => x.Rank == Card.A).ToList();
             var usedCards = aces;
             usedCards.AddRange(cards.Where(x => !usedCards.Contains(x)).Take(2));
             for (var i = 0; i < 5; i++)
@@ -117,16 +116,16 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("5s"),
-                new Poker.Card("8d"),
-                new Poker.Card("6c"),
-                new Poker.Card("6h"),
-                new Poker.Card("4h"),
-                new Poker.Card("7c")
+                new Card("5s"),
+                new Card("8d"),
+                new Card("6c"),
+                new Card("6h"),
+                new Card("4h"),
+                new Card("7c")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.Straight, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.Straight, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(2);
@@ -144,15 +143,15 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("4h"),
-                new Poker.Card("Ad"),
-                new Poker.Card("5c"),
-                new Poker.Card("Tc"),
-                new Poker.Card("2h"),
-                new Poker.Card("3s")
+                new Card("4h"),
+                new Card("Ad"),
+                new Card("5c"),
+                new Card("Tc"),
+                new Card("2h"),
+                new Card("3s")
             };
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.Straight, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.Straight, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             cards.RemoveAt(3);
@@ -172,16 +171,16 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("6d"),
-                new Poker.Card("Ad"),
-                new Poker.Card("Kd"),
-                new Poker.Card("6h"),
-                new Poker.Card("4d"),
-                new Poker.Card("2d")
+                new Card("6d"),
+                new Card("Ad"),
+                new Card("Kd"),
+                new Card("6h"),
+                new Card("4d"),
+                new Card("2d")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.Flush, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.Flush, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             var usedCards = cards.Where(x => x.Suit == Suit.Diamond).ToList();
@@ -198,22 +197,22 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("Ad"),
-                new Poker.Card("6h"),
-                new Poker.Card("Ac"),
-                new Poker.Card("6s"),
-                new Poker.Card("8h"),
-                new Poker.Card("6c")
+                new Card("Ad"),
+                new Card("6h"),
+                new Card("Ac"),
+                new Card("6s"),
+                new Card("8h"),
+                new Card("6c")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.FullHouse, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.FullHouse, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             var usedCards = cards.Where(x => x.Rank == 6).ToList();
             usedCards.Sort();
             usedCards.Reverse();
-            var aces = cards.Where(x => x.Rank == Poker.Card.A).ToList();
+            var aces = cards.Where(x => x.Rank == Card.A).ToList();
             aces.Sort();
             aces.Reverse();
             usedCards.AddRange(aces);
@@ -228,19 +227,19 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("As"),
-                new Poker.Card("Tc"),
-                new Poker.Card("Ah"),
-                new Poker.Card("Ad"),
-                new Poker.Card("6c"),
-                new Poker.Card("Ac")
+                new Card("As"),
+                new Card("Tc"),
+                new Card("Ah"),
+                new Card("Ad"),
+                new Card("6c"),
+                new Card("Ac")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.FourOfAKind, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.FourOfAKind, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
-            var usedCards = cards.Where(x => x.Rank == Poker.Card.A).ToList();
+            var usedCards = cards.Where(x => x.Rank == Card.A).ToList();
             usedCards.Sort();
             usedCards.Reverse();
             usedCards.Add(cards[1]);
@@ -255,16 +254,16 @@ namespace PlayingCards.Test
         {
             var cards = new List<Card>
             {
-                new Poker.Card("Js"),
-                new Poker.Card("Ts"),
-                new Poker.Card("8s"),
-                new Poker.Card("9d"),
-                new Poker.Card("Qs"),
-                new Poker.Card("9s")
+                new Card("Js"),
+                new Card("Ts"),
+                new Card("8s"),
+                new Card("9d"),
+                new Card("Qs"),
+                new Card("9s")
             };
 
-            var hand = new Poker.Hand(cards);
-            Assert.AreEqual(Poker.HandRank.StraightFlush, hand.Rank);
+            var hand = new Hand(cards);
+            Assert.AreEqual(HandRank.StraightFlush, hand.Rank);
 
             Assert.AreEqual(5, hand.Cards.Count);
             var usedCards = cards.Where(x => x.Suit == Suit.Spade).ToList();
@@ -283,23 +282,23 @@ namespace PlayingCards.Test
             {
                 new List<Card>
                 {
-                    new Poker.Card("As"),
-                    new Poker.Card("2d")
+                    new Card("As"),
+                    new Card("2d")
                 },
                 new List<Card>
                 {
-                    new Poker.Card("Ad"),
-                    new Poker.Card("8d")
+                    new Card("Ad"),
+                    new Card("8d")
                 }
             };
             var communityCards = new List<Card> { };
-            var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
-            Assert.AreEqual(32.97f, result[0].Total);
-            Assert.AreEqual(22.73f, result[0].Win);
-            Assert.AreEqual(20.49f, result[0].Split);
-            Assert.AreEqual(67.03f, result[1].Total);
-            Assert.AreEqual(56.78f, result[1].Win);
-            Assert.AreEqual(20.49f, result[1].Split);
+            var result = await Equity.Calculator.Calc(hands, communityCards);
+            Assert.AreEqual(32.97f, result[0].Equity.Total);
+            Assert.AreEqual(22.73f, result[0].Equity.Win);
+            Assert.AreEqual(20.49f, result[0].Equity.Split);
+            Assert.AreEqual(67.03f, result[1].Equity.Total);
+            Assert.AreEqual(56.78f, result[1].Equity.Win);
+            Assert.AreEqual(20.49f, result[1].Equity.Split);
         }
 
         [Test()]
@@ -309,31 +308,31 @@ namespace PlayingCards.Test
             {
                 new List<Card>
                 {
-                    new Poker.Card("As"),
-                    new Poker.Card("Kh")
+                    new Card("As"),
+                    new Card("Kh")
                 },
                 new List<Card>
                 {
-                    new Poker.Card("9d"),
-                    new Poker.Card("8d")
+                    new Card("9d"),
+                    new Card("8d")
                 },
                 new List<Card>
                 {
-                    new Poker.Card("Ac"),
-                    new Poker.Card("8s")
+                    new Card("Ac"),
+                    new Card("8s")
                 }
             };
             var communityCards = new List<Card> { };
-            var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
-            Assert.AreEqual(55.28f, result[0].Total);
-            Assert.AreEqual(53.32f, result[0].Win);
-            Assert.AreEqual(4.02f, result[0].Split);
-            Assert.AreEqual(31.18f, result[1].Total);
-            Assert.AreEqual(30.34f, result[1].Win);
-            Assert.AreEqual(1.79f, result[1].Split);
-            Assert.AreEqual(13.54f, result[2].Total);
-            Assert.AreEqual(10.85f, result[2].Win);
-            Assert.AreEqual(5.48f, result[2].Split);
+            var result = await Equity.Calculator.Calc(hands, communityCards);
+            Assert.AreEqual(55.28f, result[0].Equity.Total);
+            Assert.AreEqual(53.32f, result[0].Equity.Win);
+            Assert.AreEqual(4.02f, result[0].Equity.Split);
+            Assert.AreEqual(31.18f, result[1].Equity.Total);
+            Assert.AreEqual(30.34f, result[1].Equity.Win);
+            Assert.AreEqual(1.79f, result[1].Equity.Split);
+            Assert.AreEqual(13.54f, result[2].Equity.Total);
+            Assert.AreEqual(10.85f, result[2].Equity.Win);
+            Assert.AreEqual(5.48f, result[2].Equity.Split);
         }
 
         [Test()]
@@ -343,31 +342,31 @@ namespace PlayingCards.Test
             {
                 new List<Card>
                 {
-                    new Poker.Card("As"),
-                    new Poker.Card("2h")
+                    new Card("As"),
+                    new Card("2h")
                 },
                 new List<Card>
                 {
-                    new Poker.Card("Ac"),
-                    new Poker.Card("2s")
+                    new Card("Ac"),
+                    new Card("2s")
                 }
             };
             var communityCards = new List<Card>
             {
-                new Poker.Card("Ah"),
-                new Poker.Card("Ad"),
-                new Poker.Card("Kh"),
-                new Poker.Card("Js"),
-                new Poker.Card("Ts")
+                new Card("Ah"),
+                new Card("Ad"),
+                new Card("Kh"),
+                new Card("Js"),
+                new Card("Ts")
             };
 
-            var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
-            Assert.AreEqual(50f, result[0].Total);
-            Assert.AreEqual(0, result[0].Win);
-            Assert.AreEqual(100f, result[0].Split);
-            Assert.AreEqual(50f, result[1].Total);
-            Assert.AreEqual(0, result[1].Win);
-            Assert.AreEqual(100f, result[1].Split);
+            var result = await Equity.Calculator.Calc(hands, communityCards);
+            Assert.AreEqual(50f, result[0].Equity.Total);
+            Assert.AreEqual(0, result[0].Equity.Win);
+            Assert.AreEqual(100f, result[0].Equity.Split);
+            Assert.AreEqual(50f, result[1].Equity.Total);
+            Assert.AreEqual(0, result[1].Equity.Win);
+            Assert.AreEqual(100f, result[1].Equity.Split);
         }
 
         [Test()]
@@ -378,38 +377,38 @@ namespace PlayingCards.Test
             {
                 new List<Card>
                 {
-                    new Poker.Card("8s"),
-                    new Poker.Card("4s")
+                    new Card("8s"),
+                    new Card("4s")
                 },
                 new List<Card>
                 {
-                    new Poker.Card("Kh"),
-                    new Poker.Card("Kc")
+                    new Card("Kh"),
+                    new Card("Kc")
                 }
             };
             var communityCards = new List<Card>
             {
-                new Poker.Card("Ts"),
-                new Poker.Card("2d"),
-                new Poker.Card("6s"),
-                new Poker.Card("9c")
+                new Card("Ts"),
+                new Card("2d"),
+                new Card("6s"),
+                new Card("9c")
             };
 
-            var result = await Poker.Hand.EquityCalculator.Calc(hands, communityCards);
+            var result = await Equity.Calculator.Calc(hands, communityCards);
             var outs = new List<Card>
             {
-                new Poker.Card("As"),
-                new Poker.Card("Ks"),
-                new Poker.Card("Qs"),
-                new Poker.Card("Js"),
-                new Poker.Card("9s"),
-                new Poker.Card("7s"),
-                new Poker.Card("5s"),
-                new Poker.Card("3s"),
-                new Poker.Card("2s"),
-                new Poker.Card("7h"),
-                new Poker.Card("7d"),
-                new Poker.Card("7c")
+                new Card("As"),
+                new Card("Ks"),
+                new Card("Qs"),
+                new Card("Js"),
+                new Card("9s"),
+                new Card("7s"),
+                new Card("5s"),
+                new Card("3s"),
+                new Card("2s"),
+                new Card("7h"),
+                new Card("7d"),
+                new Card("7c")
             };
 
             Assert.AreEqual(outs.Count, result[0].Outs.Count);

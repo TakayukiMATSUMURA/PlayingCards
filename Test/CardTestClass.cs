@@ -2,8 +2,6 @@
 
 namespace PlayingCards.Test
 {
-    using Card = Default.Card;
-
     [TestFixture()]
     public class CardTestClass
     {

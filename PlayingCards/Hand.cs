@@ -3,31 +3,29 @@ using System.Linq;
 
 namespace PlayingCards
 {
-    public static partial class Default
+    public class Hand
     {
-        public class Hand
+        public List<Card> Cards { get; protected set; }
+
+        public Hand()
         {
-            public List<Card> Cards { get; protected set; }
+            Cards = new List<Card>();
+        }
 
-            public Hand()
-            {
-                Cards = new List<Card>();
-            }
+        public Hand(List<Card> cards)
+        {
+            Cards = cards;
+        }
 
-            public Hand(List<Card> cards)
-            {
-                Cards = cards;
-            }
+        public void Add(Card card)
+        {
+            Cards.Add(card);
+        }
 
-            public void Add(Card card)
-            {
-                Cards.Add(card);
-            }
-
-            public override string ToString()
-            {
-                return string.Join("", Cards.Select(x => x.ToString()));
-            }
+        public override string ToString()
+        {
+            return string.Join("", Cards.Select(x => x.ToString()));
         }
     }
 }
+

@@ -1,30 +1,29 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using DefaultCard = PlayingCards.Card;
 
-namespace PlayingCards
+namespace PlayingCards.Poker
 {
-    public static partial class Poker
+    public class Card : DefaultCard
     {
-        public class Card : Default.Card
+        public new const int A = 14;
+
+        public override int Rank => (base.Rank == DefaultCard.A ? A : base.Rank);
+
+        public Card(int rank, Suit suit) : base(rank % 14, suit)
         {
-            public new const int A = 14;
-
-            public override int Rank => (base.Rank == Default.Card.A ? A : base.Rank);
-
-            public Card(int rank, Suit suit) : base(rank % 14, suit)
-            {
-            }
-
-            public Card(string card) : base(card)
-            {
-            }
         }
 
-        public static List<Default.Card> Deck
+        public Card(string card) : base(card)
+        {
+        }
+
+
+        public new static List<Card> Deck
         {
             get
             {
-                return Default.Deck.Select(x => (Default.Card)new Card(x.Rank, x.Suit)).ToList();
+                return DefaultCard.Deck.Select(x => new Card(x.Rank, x.Suit)).ToList();
             }
         }
     }
