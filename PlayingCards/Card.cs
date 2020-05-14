@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace PlayingCards
 {
@@ -11,6 +13,7 @@ namespace PlayingCards
         Spade
     }
 
+    [DataContract]
     public class Card : IComparable
     {
         public const int A = 1;
@@ -19,12 +22,23 @@ namespace PlayingCards
         public const int Q = 12;
         public const int K = 13;
 
+        [IgnoreDataMember]
         private readonly int _rank;
+        [IgnoreDataMember]
         public virtual int Rank => _rank;
 
+        [IgnoreDataMember]
         public readonly Suit Suit;
 
+        [IgnoreDataMember]
         public bool IsFace => _rank >= J;
+
+        [DataMember(Name = "Card")]
+        private string _card;
+
+        public Card()
+        {
+        }
 
         public Card(int rank, Suit suit)
         {
@@ -36,6 +50,7 @@ namespace PlayingCards
             Suit = suit;
         }
 
+        [JsonConstructor]
         public Card(string card)
         {
             var rank = card[0] == 'A' ? A :
@@ -128,6 +143,12 @@ namespace PlayingCards
 
                 return result;
             }
+        }
+
+        [OnSerializing]
+        private void OnSerializing(StreamingContext context)
+        {
+            _card = ToString();
         }
     }
 }

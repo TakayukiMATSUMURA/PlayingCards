@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Collections.Generic;
 
 namespace PlayingCards.Poker
@@ -16,16 +18,31 @@ namespace PlayingCards.Poker
         StraightFlush
     }
 
-    public partial class Hand : PlayingCards.Hand
+    [DataContract]
+    public class Hand : Hand<Card>
     {
+        [DataMember]
         protected ulong _code;
+
+        [IgnoreDataMember]
         public HandRank Rank => Cards.Count >= 5 ? GetRank(_code) : HandRank.HighCard;
 
-        public readonly List<Card> PocketCards;
+        [IgnoreDataMember]
+        public readonly List<Card> PocketCards = new List<Card>();
+        [DataMember]
+        private List<string> _pocketCards;
+
+        [IgnoreDataMember]
         public readonly List<Card> CommunityCards;
 
+        [DataMember]
         public Equity Equity { get; private set; }
+        [DataMember]
         public List<Card> Outs { get; private set; }
+
+        public Hand() : base()
+        {
+        }
 
         public Hand(List<Card> cards) : this(cards, new List<Card>())
         {
@@ -68,7 +85,7 @@ namespace PlayingCards.Poker
             else
             {
                 _code = 0;
-                Cards = cards.Select(x => x as PlayingCards.Card).ToList();
+                Cards = cards;
             }
         }
 
@@ -261,18 +278,18 @@ namespace PlayingCards.Poker
                    code >= ((ulong)0x10000 << (int)HandRank.OnePair * 4) ? HandRank.OnePair : HandRank.HighCard;
         }
 
-        public static List<PlayingCards.Card> GetUsedCards(ulong code, List<Card> allCards)
+        public static List<Card> GetUsedCards(ulong code, List<Card> allCards)
         {
-            var cards = new List<PlayingCards.Card>(allCards);
+            var cards = new List<Card>(allCards);
             cards.Sort();
             cards.Reverse();
-            var result = new List<PlayingCards.Card>();
+            var result = new List<Card>();
             var rank = GetRank(code);
             var cardsCode = code >> ((int)rank * 4);
             var nextRank = (int)(cardsCode >> (4 * 4));
             Suit majorSuit;
             var majorRank = 0;
-            var pair = new List<PlayingCards.Card>();
+            var pair = new List<Card>();
             switch (rank)
             {
                 case HandRank.StraightFlush:
@@ -355,7 +372,14 @@ namespace PlayingCards.Poker
 
         public override bool Equals(object obj)
         {
-            return _code == ((Hand)obj)._code;
+            if (obj is Hand h)
+            {
+                return _code == ((Hand)obj)._code;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override int GetHashCode()
@@ -403,6 +427,19 @@ namespace PlayingCards.Poker
         {
             Equity = result.Equity;
             Outs = result.Outs;
+        }
+
+        [OnSerializing]
+        private void OnSerializing(StreamingContext context)
+        {
+            _pocketCards = PocketCards.Select(x => x.ToString()).ToList();
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            PocketCards.Clear();
+            PocketCards.AddRange(_pocketCards.Select(x => new Card(x)).ToList());
         }
     }
 }

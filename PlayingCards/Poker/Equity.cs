@@ -3,13 +3,18 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace PlayingCards.Poker
 {
+    [DataContract]
     public class Equity
     {
+        [DataMember]
         public readonly float Total;
+        [DataMember]
         public readonly float Win;
+        [DataMember]
         public readonly float Split;
 
         public Equity(float total, float win, float split)
