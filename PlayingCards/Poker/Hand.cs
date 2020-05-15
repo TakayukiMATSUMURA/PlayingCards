@@ -37,8 +37,10 @@ namespace PlayingCards.Poker
 
         [DataMember]
         public Equity Equity { get; private set; }
+        [IgnoreDataMember]
+        public List<Card> Outs = new List<Card>();
         [DataMember]
-        public List<Card> Outs { get; private set; }
+        private List<string> _outs;
 
         public Hand() : base()
         {
@@ -433,6 +435,7 @@ namespace PlayingCards.Poker
         private void OnSerializing(StreamingContext context)
         {
             _pocketCards = PocketCards.Select(x => x.ToString()).ToList();
+            _outs = Outs.Select(x => x.ToString()).ToList();
         }
 
         [OnDeserialized]
@@ -440,6 +443,8 @@ namespace PlayingCards.Poker
         {
             PocketCards.Clear();
             PocketCards.AddRange(_pocketCards.Select(x => new Card(x)).ToList());
+
+            Outs = _outs.Select(x => new Card(x)).ToList();
         }
     }
 }
