@@ -37,23 +37,23 @@ namespace PlayingCards.Poker
                 public List<Card> Outs = new List<Card>();
             }
 
-            public static async Task Calc(List<Hand> hands, List<Card> communityCards)
+            public static async Task Calc(List<Hand> hands, List<Card> communityCards, List<Card> exposedCards = null)
             {
                 var cards = hands.Select(x => x.PocketCards).ToList();
-                var result = await Calc(cards, communityCards);
+                var result = await Calc(cards, communityCards, exposedCards);
                 for (var i = 0; i < hands.Count; i++)
                 {
                     hands[i].SetCalculateResult(result[i]);
                 }
             }
 
-            public static async Task<List<Result>> Calc(List<List<Card>> hands, List<Card> communityCards)
+            public static async Task<List<Result>> Calc(List<List<Card>> hands, List<Card> communityCards, List<Card> exposedCards = null)
             {
                 var result = new List<Result>();
 
                 var deck = Card.Deck;
                 var allCards = hands.SelectMany(x => x);
-                deck.RemoveAll(x => allCards.Contains(x) || communityCards.Contains(x));
+                deck.RemoveAll(x => allCards.Contains(x) || communityCards.Contains(x) || (exposedCards != null && exposedCards.Contains(x)));
                 var counters = new int[hands.Count];
                 var splitCounters = new int[hands.Count, hands.Count + 1];
 
