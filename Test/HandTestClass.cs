@@ -370,6 +370,34 @@ namespace PlayingCards.Poker.Test
         }
 
         [Test()]
+        public async Task TestEquityWithExposedCards()
+        {
+            var hands = new List<List<Card>>
+            {
+                new List<Card>
+                {
+                    new Card("As"),
+                    new Card("Ks")
+                },
+                new List<Card>
+                {
+                    new Card("Th"),
+                    new Card("9h")
+                }
+            };
+            var communityCards = new List<Card>();
+            var exposedCards = new List<Card>() { new Card("8h"), new Card("7h") };
+
+            var result = await Equity.Calculator.Calc(hands, communityCards, exposedCards);
+            Assert.AreEqual(64.42f, result[0].Equity.Total);
+            Assert.AreEqual(64.17f, result[0].Equity.Win);
+            Assert.AreEqual(0.5f, result[0].Equity.Split);
+            Assert.AreEqual(35.58f, result[1].Equity.Total);
+            Assert.AreEqual(35.33f, result[1].Equity.Win);
+            Assert.AreEqual(0.5f, result[1].Equity.Split);
+        }
+
+        [Test()]
         public async Task TestOuts()
         {
             // WSOP 2019 last hand
@@ -412,7 +440,7 @@ namespace PlayingCards.Poker.Test
             };
 
             Assert.AreEqual(outs.Count, result[0].Outs.Count);
-            for(var i = 0; i < outs.Count; i++)
+            for (var i = 0; i < outs.Count; i++)
             {
                 Assert.AreEqual(outs[i], result[0].Outs[i]);
             }
