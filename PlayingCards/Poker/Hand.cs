@@ -1,4 +1,9 @@
 ﻿using System;
+#if UNITY_2019
+using UniRx;
+#else
+using System.Reactive.Linq;
+#endif
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
@@ -32,9 +37,6 @@ namespace PlayingCards.Poker
         [DataMember]
         private List<string> _pocketCards;
 
-        [IgnoreDataMember]
-        public readonly List<Card> CommunityCards;
-
         [DataMember]
         public Equity Equity { get; private set; }
         [IgnoreDataMember]
@@ -46,19 +48,19 @@ namespace PlayingCards.Poker
         {
         }
 
-        public Hand(List<Card> cards) : this(cards, new List<Card>())
-        {
+        public Hand(List<Card> cards) : this(cards, null)
+        {            
         }
 
-        public Hand(List<Card> pocketCards, List<Card> communityCards)
+        public Hand(List<Card> pocketCards, IObservable<List<Card>> communityCards)
         {
             PocketCards = new List<Card>(pocketCards);
             PocketCards.Sort();
             PocketCards.Reverse();
-            CommunityCards = communityCards;
             Equity = null;
             Outs = null;
-            Update();
+            communityCards?.Subscribe(x => Update(x));
+            Update(null);
         }
 
         public override string ToString()
@@ -76,9 +78,9 @@ namespace PlayingCards.Poker
             return result;
         }
 
-        public void Update()
+        public void Update(List<Card> communityCards)
         {
-            var cards = new List<List<Card>> { PocketCards, CommunityCards }.SelectMany(x => x).ToList();
+            var cards = new List<List<Card>> { PocketCards, communityCards ?? new List<Card>() }.SelectMany(x => x).ToList();
             if (cards.Count >= 5)
             {
                 _code = Encode(cards);
