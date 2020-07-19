@@ -1,10 +1,4 @@
-﻿using System;
-#if UNITY_2019
-using UniRx;
-#else
-using System.Reactive.Linq;
-#endif
-using System.Linq;
+﻿using System.Linq;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 
@@ -52,15 +46,14 @@ namespace PlayingCards.Poker
         {            
         }
 
-        public Hand(List<Card> pocketCards, IObservable<List<Card>> communityCards)
+        public Hand(List<Card> pocketCards, List<Card> communityCards)
         {
             PocketCards = new List<Card>(pocketCards);
             PocketCards.Sort();
             PocketCards.Reverse();
             Equity = null;
             Outs = null;
-            communityCards?.Subscribe(x => Update(x));
-            Update(null);
+            Update(communityCards);
         }
 
         public override string ToString()
