@@ -104,6 +104,10 @@ namespace PlayingCards
 
         public static bool operator ==(Card a, Card b)
         {
+            if (a is null || b is null)
+            {
+                return false;
+            }
             return a.Rank == b.Rank && a.Suit == b.Suit;
         }
         public static bool operator !=(Card a, Card b)
